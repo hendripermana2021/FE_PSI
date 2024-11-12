@@ -15,8 +15,9 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 
 const App = () => {
-  const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
+  const { isColorModeSet, setColorMode } = useColorModes('APPS PSI & ROC')
   const storedTheme = useSelector((state) => state.theme)
+  console.log('from AppJS')
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])

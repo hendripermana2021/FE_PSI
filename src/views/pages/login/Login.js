@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -15,8 +15,58 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import { serverSourceDev } from '../../constantaEnv'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const Login = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Check if token exists in local storage
+    const token = sessionStorage.getItem('accessToken')
+    if (token) {
+      // Redirect to dashboard page
+      navigate('/dashboard')
+    }
+  }, [navigate])
+
+  const emittedLogin = async (e) => {
+    setIsSubmitting(true)
+    e.preventDefault()
+    try {
+      const post = await axios.post(`${serverSourceDev}login`, {
+        email,
+        password,
+      })
+      const token = post.data.data
+      sessionStorage.setItem('accessToken', token)
+      setIsSubmitting(false)
+
+      console.log(token)
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Success',
+        text: 'You have successfully logged in!',
+      })
+      navigate('/dashboard')
+    } catch (error) {
+      setIsSubmitting(false)
+
+      if (error.response) {
+        console.log(error.response.data)
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: 'Invalid username or password',
+        })
+      }
+    }
+  }
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -25,14 +75,19 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm onSubmit={emittedLogin}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput
+                        placeholder="Username"
+                        autoComplete="username"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
@@ -42,11 +97,13 @@ const Login = () => {
                         type="password"
                         placeholder="Password"
                         autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                        <CButton color="primary" className="px-4" type="submit">
                           Login
                         </CButton>
                       </CCol>
