@@ -36,6 +36,7 @@ const AddAjuanForm = () => {
   const [regionId, setRegionId] = useState('')
   const [provinces, setProvinces] = useState([]) // For storing all provinces
   const [regions, setRegions] = useState([]) // For storing regions based on selected province
+  const [usersList, setUserList] = useState([]) // For storing Users based on selected province and Region
 
   // Fetch kriteria and program data on component mount
   useEffect(() => {
@@ -80,6 +81,28 @@ const AddAjuanForm = () => {
     }
   }, [provinceId])
 
+  useEffect(() => {
+    if (regionId || provinceId) {
+      const getUsers = async () => {
+        try {
+          const response = await axios.get(
+            `${serverSourceDev}users/condition/query?regionId=${regionId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              },
+            },
+          )
+          setUserList(response.data.data) // Update regions based on province
+        } catch (error) {
+          console.error('Error fetching regions:', error)
+        }
+      }
+
+      getUsers()
+    }
+  }, [regionId || provinceId])
+
   const getKriteriaList = async () => {
     setLoading(true)
     try {
@@ -95,6 +118,9 @@ const AddAjuanForm = () => {
       setLoading(false)
     }
   }
+
+  console.log('kriteria:', kriteriaList)
+  console.log(kriteriaSelections)
 
   const getProgramList = async () => {
     setLoading(true)
@@ -126,15 +152,26 @@ const AddAjuanForm = () => {
     e.preventDefault()
     setLoading(true)
 
+    const payload = {
+      id_program: Number(programId),
+      commented: commented,
+      id_province: Number(provinceId),
+      id_region: Number(regionId),
+      id_users: Number(userId),
+      // kriteria: kriteriaSelections,
+      kriteria: kriteriaList.map((kriteria, index) => ({
+        id_kriteria: kriteria.id,
+        id_subKriteria: kriteriaSelections[index]?.id_subKriteria,
+      })),
+    }
+
+    console.log('payload', payload)
+
     try {
       const response = await axios.post(
-        `${serverSourceDev}ajuan/create`,
-        {
-          id_program: Number(programId),
-          commented,
-          id_user: Number(userId),
-          kriteria: kriteriaSelections,
-        },
+        `${serverSourceDev}ajuan/register`,
+        payload,
+
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
@@ -151,6 +188,20 @@ const AddAjuanForm = () => {
           setProgramId('')
           setCommented('')
           setUserId('')
+          setVisible(false)
+          setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
+        })
+      }
+      if (response.status === 400) {
+        Swal.fire({
+          icon: 'success',
+          title: response.msg,
+          confirmButtonText: 'OK',
+        }).then(() => {
+          setProgramId('')
+          setCommented('')
+          setUserId('')
+          // setVisible(false)
           setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
         })
       }
@@ -159,7 +210,7 @@ const AddAjuanForm = () => {
       Swal.fire({
         icon: 'error',
         title: 'Failed to add ajuan',
-        text: error.response?.data?.message || 'An unexpected error occurred',
+        text: error.response?.data?.msg || 'An unexpected error occurred',
       })
     } finally {
       setLoading(false)
@@ -172,7 +223,13 @@ const AddAjuanForm = () => {
         Tambah Ajuan
       </CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+        size="lg"
+      >
         <CModalHeader>
           <CModalTitle>Tambah Program</CModalTitle>
         </CModalHeader>
@@ -219,29 +276,46 @@ const AddAjuanForm = () => {
                 </CFormSelect>
               </CCol>
 
+              <CCol md={12} className="mb-3">
+                <h6>Select Penanggung Jawab</h6>
+                <CFormSelect
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  disabled={!regionId}
+                >
+                  <option value="">Select Users</option>
+                  {usersList.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+
               {/* Loop through kriteria list and render inputs and selects */}
               {kriteriaList.map((kriteria, index) => (
                 <React.Fragment key={kriteria.id}>
                   <CCol md={6} className="mb-3">
-                    <h6>Select Kriteria</h6>
-                    {/* Use CFormInput to make Kriteria a disabled input */}
                     <CFormInput
                       type="text"
-                      name="id_kriteria"
+                      floatingLabel={'kriteria ' + (index + 1)}
                       value={kriteriaSelections[index]?.id_kriteria || kriteria.name_kriteria}
+                      placeholder="Kriteria"
                       onChange={(e) => handleKriteriaChange(e, index, 'id_kriteria')}
-                      disabled // Disable the input to keep it read-only
+                      readOnly={true}
                     />
                   </CCol>
 
                   <CCol md={6} className="mb-3">
-                    <h6>Select Sub Kriteria</h6>
                     <CFormSelect
                       name="id_subKriteria"
+                      floatingLabel="Select Sub Kriteria"
                       value={kriteriaSelections[index]?.id_subKriteria || ''}
                       onChange={(e) => handleKriteriaChange(e, index, 'id_subKriteria')}
                     >
-                      <option value="">Select Sub Kriteria</option>
+                      <option value="" selected hidden>
+                        Select Sub Kriteria
+                      </option>
                       {kriteria.sub_kriteria.map((sub) => (
                         <option key={sub.id} value={sub.id}>
                           {sub.name_sub}

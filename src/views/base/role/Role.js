@@ -1,10 +1,7 @@
 import React from 'react'
 import {
-  CButton,
   CCard,
   CCardBody,
-  CCardFooter,
-  CCardGroup,
   CCardHeader,
   CCardImage,
   CCardLink,
@@ -22,8 +19,8 @@ import {
 import { DocsExample } from 'src/components'
 
 import ReactImg from 'src/assets/images/react.jpg'
-import TableRole from './table-role'
 import { constantaSource } from '../../constantaEnv'
+import TableRole from './Table-role'
 
 const Roles = () => {
   return (

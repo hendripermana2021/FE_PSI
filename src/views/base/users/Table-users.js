@@ -26,6 +26,7 @@ import CreateUsers from './addUsers'
 const TableUsers = () => {
   const [users, setUsers] = useState([])
   const [role, setRole] = useState([])
+
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -66,7 +67,7 @@ const TableUsers = () => {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
       })
-      setRoleList(response.data.data)
+      setRole(response.data.data)
     } catch (error) {
       console.error('Error fetching provinces:', error)
     }

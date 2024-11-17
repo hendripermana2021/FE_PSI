@@ -11,6 +11,7 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
+  CBadge,
 } from '@coreui/react'
 import 'datatables.net-dt/css/dataTables.dataTables.min.css'
 import 'datatables.net-dt/js/dataTables.dataTables'
@@ -19,6 +20,9 @@ import 'jquery/dist/jquery.min.js'
 import axios from 'axios'
 import { constantaSource, serverSourceDev } from '../../constantaEnv'
 import AddAjuanForm from './addAjuan'
+import EditAjuan from './editAjuan'
+import Swal from 'sweetalert2'
+import DetailAjuan from './detailAjuan'
 
 const TableAjuan = () => {
   const [program, setProgram] = useState('') // Default to empty string
@@ -26,7 +30,9 @@ const TableAjuan = () => {
   const [ajuan, setAjuan] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // Initialize DataTable on mount
+  console.log('ajuan', ajuan)
+
+  // Fetch Program data on mount
   useEffect(() => {
     getProgram()
   }, [])
@@ -38,13 +44,8 @@ const TableAjuan = () => {
     }
   }, [program])
 
-  // Reinitialize DataTable whenever the Ajuan data is updated
-  useEffect(() => {
-    if (!loading) {
-      $('#tableAjuan').DataTable().destroy() // Destroy previous instance
-      $('#tableAjuan').DataTable() // Reinitialize DataTable
-    }
-  }, [ajuan])
+  // Initialize or destroy DataTable when ajuan data is updated
+  useEffect(() => {}, [ajuan, loading])
 
   const getProgram = async () => {
     try {
@@ -70,6 +71,7 @@ const TableAjuan = () => {
         },
       })
       setAjuan(response.data.data)
+      console.log(ajuan)
     } catch (error) {
       console.error('Error fetching ajuan data:', error)
     } finally {
@@ -79,6 +81,33 @@ const TableAjuan = () => {
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(number)
+  }
+
+  const deleteAjuan = async (data) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`${serverSourceDev}ajuan/delete/${data.id}`, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            },
+          })
+          getAjuan(program) // Refresh the table after deletion
+          Swal.fire('Deleted!', 'Your data has been deleted.', 'success')
+        } catch (error) {
+          console.error('Error deleting data:', error)
+          Swal.fire('Error!', 'Your data cannot be deleted.', 'error')
+        }
+      }
+    })
   }
 
   return (
@@ -101,7 +130,7 @@ const TableAjuan = () => {
               <CCol md={6} className="text-end">
                 <h6>Select Program</h6>
                 <CFormSelect value={program} onChange={(e) => setProgram(e.target.value)}>
-                  <option value="">Select Program</option>
+                  <option value="99">Select Program</option>
                   {programList.map((prog) => (
                     <option key={prog.id} value={prog.id}>
                       {prog.name_program}
@@ -114,10 +143,10 @@ const TableAjuan = () => {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name Pengaju</th>
+                  <th>Region</th>
                   <th>Programs</th>
                   <th>Jlh Dana</th>
-                  <th>PSI</th>
+                  <th>PSI Result</th>
                   <th>Commented</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -137,28 +166,46 @@ const TableAjuan = () => {
                     </td>
                   </tr>
                 ) : (
-                  ajuan.map((programs, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td>{programs?.name_pengaju || 'N/A'}</td>
-                      <td>{programs?.name_program || 'N/A'}</td>
-                      <td>{formatRupiah(programs.total_dana_alokasi)}</td>
-                      <td>{programs?.psi || 'N/A'}</td>
-                      <td>{programs?.commented || 'N/A'}</td>
-                      <td>{programs?.status || 'N/A'}</td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group" key={index}>
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>View Details</CDropdownItem>
-                            <CDropdownItem>Edit</CDropdownItem>
-                            <CDropdownItem>Delete</CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
+                  ajuan.map(
+                    (programs, index) =>
+                      (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{programs?.users.name || '-'}</td>
+                          <td>{programs?.program.name_program || '-'}</td>
+                          <td>{formatRupiah(programs.jlh_dana)}</td>
+                          <td>{programs?.psi_result || 0}</td>
+                          <td>{programs?.commented || '-'}</td>
+                          <td>
+                            {' '}
+                            {programs?.req_status ? (
+                              <CBadge color="danger">Belum Disetujui</CBadge>
+                            ) : (
+                              <CBadge color="success">Disetujui</CBadge>
+                            )}{' '}
+                          </td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group" key={index}>
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditAjuan ajuan={programs} refreshTable={getAjuan} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <DetailAjuan ajuan={programs} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <CButton onClick={() => deleteAjuan(programs)}>
+                                    Delete Data
+                                  </CButton>
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ) || '',
+                  )
                 )}
               </tbody>
             </table>
