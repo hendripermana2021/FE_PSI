@@ -77,7 +77,13 @@ const AddRoles = (props) => {
         Add Role
       </CButton>{' '}
       {/* Updated button text */}
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        scrollable
+        backdrop="static"
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Create New Role</CModalTitle> {/* Updated title */}
         </CModalHeader>

@@ -65,7 +65,13 @@ const AddProvince = (props) => {
       <CButton onClick={() => setVisible(true)} variant="outline" is color="primary">
         Add Province
       </CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Add Data Province</CModalTitle>
         </CModalHeader>

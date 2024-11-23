@@ -26,7 +26,7 @@ const EditAjuan = (props) => {
   const [programName, setProgramName] = useState(data.program.name_program)
   const [nameProvince, setNameProvince] = useState(data.province.name_province)
   const [provinceId, setProvinceId] = useState(data.id_province)
-  const [nameRegion, setNameRegion] = useState(data.region.name_region)
+  const [nameRegion, setNameRegion] = useState(data.region ? data.region.name_region : '')
   const [regionId, setRegionId] = useState(data.id_region)
   const [username, setUsername] = useState(data.users.name)
   const [userId, setUserId] = useState(data.id_users)
@@ -45,6 +45,8 @@ const EditAjuan = (props) => {
       id_subKriteria: '',
     },
   ])
+
+  console.log('View Data', data)
 
   useEffect(() => {
     getProvinces()
@@ -73,7 +75,15 @@ const EditAjuan = (props) => {
       })
       setProvincesList(response.data.data)
     } catch (error) {
-      console.error('Error fetching provinces:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Province data')
+      }
     }
   }
 
@@ -130,7 +140,15 @@ const EditAjuan = (props) => {
       )
       setUserList(response.data.data)
     } catch (error) {
-      console.error('Error fetching users:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Region data')
+      }
     }
   }
 
@@ -204,6 +222,7 @@ const EditAjuan = (props) => {
         alignment="center"
         scrollable
         visible={visible}
+        backdrop="static"
         onClose={() => setVisible(false)}
         size="lg"
       >

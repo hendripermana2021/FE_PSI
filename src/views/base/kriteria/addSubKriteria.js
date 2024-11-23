@@ -43,7 +43,16 @@ const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
       })
       setKriteria(response.data.data || [])
     } catch (error) {
-      console.error('Error fetching kriteria data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Program data')
+      }
+      console.log(error, 'Error fetching data')
     } finally {
       setLoading(false)
     }
@@ -100,7 +109,13 @@ const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
       <CButton onClick={() => setVisible(true)} color="primary">
         Add Sub
       </CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Add Sub Kriteria</CModalTitle>
         </CModalHeader>

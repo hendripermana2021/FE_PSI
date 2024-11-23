@@ -23,7 +23,9 @@ const DetailKriteria = ({ kriteria }) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(!visible)}>Detail Data Kriteria</CButton>
+      <CButton type="button" onClick={() => setVisible(!visible)}>
+        Detail Data Kriteria
+      </CButton>
       <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
           <CModalTitle>Detail Kriteria and Sub Kriteria</CModalTitle>

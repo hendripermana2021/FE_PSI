@@ -75,9 +75,15 @@ const EditRoles = (props) => {
   return (
     <>
       <CButton onClick={() => setVisible(true)}>Edit Role</CButton> {/* Updated button text */}
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
-          <CModalTitle>Create New Role</CModalTitle> {/* Updated title */}
+          <CModalTitle>Update Role</CModalTitle> {/* Updated title */}
         </CModalHeader>
 
         <CModalBody>

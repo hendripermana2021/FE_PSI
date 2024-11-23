@@ -81,7 +81,13 @@ const EditPrograms = (props) => {
     <>
       <CButton onClick={() => setVisible(true)}>Edit Data</CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Update Program</CModalTitle>
         </CModalHeader>

@@ -13,12 +13,15 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
+  CModalFooter,
 } from '@coreui/react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { serverSourceDev } from '../../constantaEnv'
+import propTypes from 'prop-types'
 
-const AddAjuanForm = () => {
+const AddAjuanForm = (props) => {
+  const { refreshTable, program } = props // Only refreshTable since we're creating a new role
   const [loading, setLoading] = useState(false)
   const [programId, setProgramId] = useState('')
   const [commented, setCommented] = useState('')
@@ -38,10 +41,11 @@ const AddAjuanForm = () => {
   const [regions, setRegions] = useState([]) // For storing regions based on selected province
   const [usersList, setUserList] = useState([]) // For storing Users based on selected province and Region
 
+  console.log('kriteria', kriteriaSelections)
+  console.log('sub_kriteria')
   // Fetch kriteria and program data on component mount
   useEffect(() => {
-    getKriteriaList()
-    getProgramList()
+    getProgram()
   }, [])
 
   // Fetch all provinces on component mount
@@ -55,7 +59,15 @@ const AddAjuanForm = () => {
         })
         setProvinces(response.data.data)
       } catch (error) {
-        console.error('Error fetching provinces:', error)
+        if (error.response.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Data Tidak Ada',
+            text: 'Maaf Data tidak ditemukan atau belum dibuat',
+          })
+        } else {
+          handleError(error, 'Error fetching Provinces data')
+        }
       }
     }
     getProvinces()
@@ -73,7 +85,15 @@ const AddAjuanForm = () => {
           })
           setRegions(response.data.data) // Update regions based on province
         } catch (error) {
-          console.error('Error fetching regions:', error)
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error fetching Regions data')
+          }
         }
       }
 
@@ -95,7 +115,15 @@ const AddAjuanForm = () => {
           )
           setUserList(response.data.data) // Update regions based on province
         } catch (error) {
-          console.error('Error fetching regions:', error)
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error fetching Users data')
+          }
         }
       }
 
@@ -103,36 +131,59 @@ const AddAjuanForm = () => {
     }
   }, [regionId || provinceId])
 
-  const getKriteriaList = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${serverSourceDev}kriteria-sub`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
-        },
-      })
-      setKriteriaList(response.data.data || [])
-    } catch (error) {
-      handleError(error, 'Error fetching kriteria data')
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    if (programId) {
+      const getKriteriaList = async () => {
+        setLoading(true)
+        try {
+          const response = await axios.get(
+            `${serverSourceDev}program-kriteria/program/${programId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              },
+            },
+          )
+          setKriteriaList(response.data.data)
+          console.log('Program by Kriteria', response.data.data)
+        } catch (error) {
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error fetching Kriteria data')
+          }
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      getKriteriaList()
     }
-  }
+  }, [programId])
 
-  console.log('kriteria:', kriteriaList)
-  console.log(kriteriaSelections)
-
-  const getProgramList = async () => {
-    setLoading(true)
+  const getProgram = async () => {
     try {
-      const response = await axios.get(`${serverSourceDev}program`, {
+      const response = await axios.get(`${serverSourceDev}program-kriteria`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
       })
-      setProgramList(response.data.data || [])
+      setProgramList(response.data.data)
+      console.log('test aja')
     } catch (error) {
-      handleError(error, 'Error fetching program data')
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Program data')
+      }
     } finally {
       setLoading(false)
     }
@@ -152,6 +203,14 @@ const AddAjuanForm = () => {
     e.preventDefault()
     setLoading(true)
 
+    if (!programId || !commented || !provinceId || !regionId || !userId) {
+      setLoading(false)
+      return Swal.fire({
+        icon: 'error',
+        title: 'All fields must be filled',
+      })
+    }
+
     const payload = {
       id_program: Number(programId),
       commented: commented,
@@ -159,7 +218,7 @@ const AddAjuanForm = () => {
       id_region: Number(regionId),
       id_users: Number(userId),
       // kriteria: kriteriaSelections,
-      kriteria: kriteriaList.map((kriteria, index) => ({
+      kriteria: kriteriaList[0]?.programs_kriteria.map((kriteria, index) => ({
         id_kriteria: kriteria.id,
         id_subKriteria: kriteriaSelections[index]?.id_subKriteria,
       })),
@@ -189,6 +248,7 @@ const AddAjuanForm = () => {
           setCommented('')
           setUserId('')
           setVisible(false)
+          refreshTable(program)
           setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
         })
       }
@@ -226,12 +286,13 @@ const AddAjuanForm = () => {
       <CModal
         alignment="center"
         scrollable
+        backdrop="static"
         visible={visible}
         onClose={() => setVisible(false)}
         size="lg"
       >
         <CModalHeader>
-          <CModalTitle>Tambah Program</CModalTitle>
+          <CModalTitle>Add Ajuan</CModalTitle>
         </CModalHeader>
 
         <CModalBody>
@@ -293,55 +354,67 @@ const AddAjuanForm = () => {
               </CCol>
 
               {/* Loop through kriteria list and render inputs and selects */}
-              {kriteriaList.map((kriteria, index) => (
-                <React.Fragment key={kriteria.id}>
-                  <CCol md={6} className="mb-3">
-                    <CFormInput
-                      type="text"
-                      floatingLabel={'kriteria ' + (index + 1)}
-                      value={kriteriaSelections[index]?.id_kriteria || kriteria.name_kriteria}
-                      placeholder="Kriteria"
-                      onChange={(e) => handleKriteriaChange(e, index, 'id_kriteria')}
-                      readOnly={true}
-                    />
-                  </CCol>
+              {kriteriaList === 0
+                ? ''
+                : kriteriaList[0]?.programs_kriteria.map((values, index) => (
+                    <React.Fragment key={values.id}>
+                      <CCol md={6} className="mb-3">
+                        <CFormInput
+                          type="text"
+                          floatingLabel={'kriteria ' + (index + 1)}
+                          value={
+                            kriteriaSelections[index]?.id_kriteria || values.kriteria.name_kriteria
+                          }
+                          placeholder="Kriteria"
+                          onChange={(e) => handleKriteriaChange(e, index, 'id_kriteria')}
+                          readOnly={true}
+                        />
+                      </CCol>
 
-                  <CCol md={6} className="mb-3">
-                    <CFormSelect
-                      name="id_subKriteria"
-                      floatingLabel="Select Sub Kriteria"
-                      value={kriteriaSelections[index]?.id_subKriteria || ''}
-                      onChange={(e) => handleKriteriaChange(e, index, 'id_subKriteria')}
-                    >
-                      <option value="" selected hidden>
-                        Select Sub Kriteria
-                      </option>
-                      {kriteria.sub_kriteria.map((sub) => (
-                        <option key={sub.id} value={sub.id}>
-                          {sub.name_sub}
-                        </option>
-                      ))}
-                    </CFormSelect>
-                  </CCol>
-                </React.Fragment>
-              ))}
+                      <CCol md={6} className="mb-3">
+                        <CFormSelect
+                          name="id_subKriteria"
+                          floatingLabel="Select Sub Kriteria"
+                          value={kriteriaSelections[index]?.id_subKriteria || ''}
+                          onChange={(e) => handleKriteriaChange(e, index, 'id_subKriteria')}
+                        >
+                          <option value="" selected hidden>
+                            Select Sub Kriteria
+                          </option>
+                          {values.kriteria.sub_kriteria.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name_sub}
+                            </option>
+                          ))}
+                        </CFormSelect>
+                      </CCol>
+                    </React.Fragment>
+                  ))}
             </CRow>
             <CRow>
               <CCol md={12} className="mb-3">
                 <h6>Additional Comments</h6>
                 <CFormTextarea value={commented} onChange={(e) => setCommented(e.target.value)} />
               </CCol>
-              <CCol md={12} className="text-center">
-                <CButton color="primary" type="submit" disabled={loading}>
-                  {loading ? 'Saving...' : 'Submit'}
-                </CButton>
-              </CCol>
             </CRow>
+            <CModalFooter>
+              <CButton color="secondary" onClick={() => setVisible(false)}>
+                Close
+              </CButton>
+              <CButton color="primary" type="submit" disabled={loading}>
+                {loading ? 'Saving...' : 'Submit'}
+              </CButton>
+            </CModalFooter>
           </CForm>
         </CModalBody>
       </CModal>
     </>
   )
+}
+
+AddAjuanForm.propTypes = {
+  refreshTable: propTypes.func.isRequired,
+  program: propTypes.number.isRequired,
 }
 
 export default AddAjuanForm

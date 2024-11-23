@@ -40,7 +40,16 @@ const AddRegional = (props) => {
       setProvince(response.data.data)
       setLoading(false)
     } catch (error) {
-      console.error('Error fetching province data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Province data')
+      }
+      console.log(error, 'Error fetching data')
       setLoading(false)
     }
   }
@@ -89,7 +98,13 @@ const AddRegional = (props) => {
       <CButton onClick={() => setVisible(true)} variant="outline" color="primary">
         Add Region
       </CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        scrollable
+        backdrop="static"
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Add Region</CModalTitle>
         </CModalHeader>

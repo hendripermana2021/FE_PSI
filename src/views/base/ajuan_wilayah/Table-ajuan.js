@@ -35,6 +35,7 @@ const TableAjuan = () => {
   // Fetch Program data on mount
   useEffect(() => {
     getProgram()
+    getAjuan()
   }, [])
 
   // Re-fetch Ajuan data when the selected program changes
@@ -56,7 +57,15 @@ const TableAjuan = () => {
       })
       setProgramList(response.data.data)
     } catch (error) {
-      console.error('Error fetching program data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Program data')
+      }
     } finally {
       setLoading(false)
     }
@@ -73,7 +82,15 @@ const TableAjuan = () => {
       setAjuan(response.data.data)
       console.log(ajuan)
     } catch (error) {
-      console.error('Error fetching ajuan data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Ajuan data')
+      }
     } finally {
       setLoading(false)
     }
@@ -120,7 +137,7 @@ const TableAjuan = () => {
                 <strong>Table Ajuan</strong> <small>{String(constantaSource.tableHeader)}</small>
               </CCol>
               <CCol md={5} className="text-end">
-                <AddAjuanForm refreshTable={getProgram} />
+                <AddAjuanForm refreshTable={getAjuan} programId={program} />
               </CCol>
             </CRow>
           </CCardHeader>
@@ -143,10 +160,9 @@ const TableAjuan = () => {
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Name Petugas</th>
+                  <th>Province</th>
                   <th>Region</th>
-                  <th>Programs</th>
-                  <th>Jlh Dana</th>
-                  <th>PSI Result</th>
                   <th>Commented</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -155,13 +171,13 @@ const TableAjuan = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="7" className="text-center">
                       Loading...
                     </td>
                   </tr>
                 ) : ajuan.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="7" className="text-center">
                       No Ajuan available
                     </td>
                   </tr>
@@ -172,9 +188,8 @@ const TableAjuan = () => {
                         <tr key={index}>
                           <td className="text-center">{index + 1}</td>
                           <td>{programs?.users.name || '-'}</td>
-                          <td>{programs?.program.name_program || '-'}</td>
-                          <td>{formatRupiah(programs.jlh_dana)}</td>
-                          <td>{programs?.psi_result || 0}</td>
+                          <td>{programs?.province.name_province || '-'}</td>
+                          <td>{programs?.region.name_region || '-'}</td>
                           <td>{programs?.commented || '-'}</td>
                           <td>
                             {' '}

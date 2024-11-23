@@ -22,7 +22,7 @@ const DetailAjuan = (props) => {
   const [programName, setProgramName] = useState(data.program.name_program)
   const [nameProvince, setNameProvince] = useState(data.province.name_province)
   const [provinceId, setProvinceId] = useState(data.id_province)
-  const [nameRegion, setNameRegion] = useState(data.region.name_region)
+  const [nameRegion, setNameRegion] = useState(data.region ? data.region.name_region : '')
   const [regionId, setRegionId] = useState(data.id_region)
   const [username, setUsername] = useState(data.users.name)
   const [userId, setUserId] = useState(data.id_users)
@@ -32,7 +32,7 @@ const DetailAjuan = (props) => {
   const [subKriteriaId, setSubKriteriaId] = useState(data.psi_data.id_subkriteria)
 
   return (
-    <>
+    <>  
       <CButton onClick={() => setVisible(true)}>Detail Ajuan</CButton>
 
       <CModal

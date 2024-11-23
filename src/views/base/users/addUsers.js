@@ -56,7 +56,16 @@ const CreateUsers = ({ refreshTable }) => {
       })
       setRoleList(response.data.data)
     } catch (error) {
-      console.error('Error fetching roles:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Role data')
+      }
+      console.log(error, 'Error fetching data')
     }
   }
 
@@ -71,7 +80,16 @@ const CreateUsers = ({ refreshTable }) => {
         })
         setProvinces(response.data.data)
       } catch (error) {
-        console.error('Error fetching provinces:', error)
+        if (error.response.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Data Tidak Ada',
+            text: 'Maaf Data tidak ditemukan atau belum dibuat',
+          })
+        } else {
+          handleError(error, 'Error fetching Province data')
+        }
+        console.log(error, 'Error fetching data')
       }
     }
     getRole()
@@ -90,7 +108,16 @@ const CreateUsers = ({ refreshTable }) => {
           })
           setRegions(response.data.data) // Update regions based on province
         } catch (error) {
-          console.error('Error fetching regions:', error)
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error Region Program data')
+          }
+          console.log(error, 'Error fetching data')
         }
       }
 
@@ -154,7 +181,13 @@ const CreateUsers = ({ refreshTable }) => {
         Create User
       </CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        scrollable
+        visible={visible}
+        backdrop="static"
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Create New User</CModalTitle>
         </CModalHeader>

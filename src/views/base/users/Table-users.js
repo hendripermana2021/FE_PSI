@@ -55,7 +55,16 @@ const TableUsers = () => {
       setLoading(false)
       console.log(sessionStorage.getItem('accessToken'))
     } catch (error) {
-      console.error('Error fetching room data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Users data')
+      }
+      console.log(error, 'Error fetching data')
       setLoading(false)
     }
   }
@@ -69,7 +78,16 @@ const TableUsers = () => {
       })
       setRole(response.data.data)
     } catch (error) {
-      console.error('Error fetching provinces:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Role data')
+      }
+      console.log(error, 'Error fetching data')
     }
   }
 

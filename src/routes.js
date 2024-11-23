@@ -8,8 +8,8 @@ const Programs = React.lazy(() => import('./views/base/programs/Programs'))
 const Role = React.lazy(() => import('./views/base/role/Role'))
 const Regional = React.lazy(() => import('./views/base/regional/Regional'))
 const Kriteria = React.lazy(() => import('./views/base/kriteria/Kriteria'))
-const Generate = React.lazy(() => import('./views/base/generate_psi/Generate'))
 const Ajuan = React.lazy(() => import('./views/base/ajuan_wilayah/Ajuan'))
+const Generate = React.lazy(() => import('./views/base/generate_psi/Generate'))
 
 //Forms
 
@@ -20,7 +20,7 @@ const routes = [
   { path: '/master/regional', name: 'Regional', element: Regional },
   { path: '/master/programs', name: 'Programs', element: Programs },
   { path: '/master/kriteria', name: 'Kriteria', element: Kriteria },
-  { path: '/base/generate', name: 'Generate', element: Generate },
+  { path: '/base/generate_psi', name: 'Generate', element: Generate },
   { path: '/base/ajuan', name: 'Ajuan', element: Ajuan },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
 ]

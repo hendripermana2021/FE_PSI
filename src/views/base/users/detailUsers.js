@@ -40,7 +40,16 @@ const DetailUser = (props) => {
         const selectedProvince = response.data.data.find((prov) => prov.id === data.province?.id)
         setProvince(selectedProvince?.name_province || '')
       } catch (error) {
-        console.error('Error fetching provinces:', error)
+        if (error.response.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Data Tidak Ada',
+            text: 'Maaf Data tidak ditemukan atau belum dibuat',
+          })
+        } else {
+          handleError(error, 'Error fetching Province data')
+        }
+        console.log(error, 'Error fetching data')
       }
     }
     getProvinces()
@@ -63,7 +72,16 @@ const DetailUser = (props) => {
           const selectedRegion = response.data.data.find((reg) => reg.id === data.region?.id)
           setRegion(selectedRegion?.name_region || '')
         } catch (error) {
-          console.error('Error fetching regions:', error)
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error fetching Regions data')
+          }
+          console.log(error, 'Error fetching data')
         }
       }
       getRegions()

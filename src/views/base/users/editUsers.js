@@ -48,7 +48,16 @@ const EditUser = (props) => {
       })
       setRoleList(response.data.data)
     } catch (error) {
-      console.error('Error fetching provinces:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Role data')
+      }
+      console.log(error, 'Error fetching data')
     }
   }
 
@@ -65,7 +74,16 @@ const EditUser = (props) => {
         })
         setProvinces(response.data.data)
       } catch (error) {
-        console.error('Error fetching provinces:', error)
+        if (error.response.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Data Tidak Ada',
+            text: 'Maaf Data tidak ditemukan atau belum dibuat',
+          })
+        } else {
+          handleError(error, 'Error fetching Provinces data')
+        }
+        console.log(error, 'Error fetching data')
       }
     }
     getRole()
@@ -84,7 +102,16 @@ const EditUser = (props) => {
           })
           setRegions(response.data.data) // Update regions based on province
         } catch (error) {
-          console.error('Error fetching regions:', error)
+          if (error.response.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Data Tidak Ada',
+              text: 'Maaf Data tidak ditemukan atau belum dibuat',
+            })
+          } else {
+            handleError(error, 'Error fetching Region data')
+          }
+          console.log(error, 'Error fetching data')
         }
       }
 
@@ -146,7 +173,13 @@ const EditUser = (props) => {
     <>
       <CButton onClick={() => setVisible(true)}>Edit User</CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Edit User</CModalTitle>
         </CModalHeader>

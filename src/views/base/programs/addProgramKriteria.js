@@ -40,7 +40,16 @@ const AddProgramKriteria = ({ kriteria: initialData, refreshTable }) => {
       })
       setProgramList(response.data.data || [])
     } catch (error) {
-      handleError(error, 'Error fetching program data')
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Program data')
+      }
+      console.log(error, 'Error fetching data')
     } finally {
       setLoading(false)
     }
@@ -54,9 +63,18 @@ const AddProgramKriteria = ({ kriteria: initialData, refreshTable }) => {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
       })
-      setKriteriaList(response.data.data || [])
+      setKriteriaList(response.data.data)
     } catch (error) {
-      handleError(error, 'Error fetching kriteria data')
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Kriteria data')
+      }
+      console.log(error, 'Error fetching data')
     } finally {
       setLoading(false)
     }
@@ -131,7 +149,13 @@ const AddProgramKriteria = ({ kriteria: initialData, refreshTable }) => {
       <CButton onClick={() => setVisible(true)} color="primary">
         Add Program Kriteria
       </CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Add Program Kriteria</CModalTitle>
         </CModalHeader>
@@ -143,7 +167,11 @@ const AddProgramKriteria = ({ kriteria: initialData, refreshTable }) => {
                   aria-label="Select Program"
                   floatingLabel="Select Program"
                   value={programId}
-                  onChange={(e) => setProgramId(e.target.value)}
+                  onChange={async (e) => {
+                    const selectedValue = e.target.value
+                    setProgramId(selectedValue) // Update nilai programId
+                    await getProgramList() // Memanggil function HTTP setelah programId diperbarui
+                  }}
                   required
                 >
                   <option value="" hidden>

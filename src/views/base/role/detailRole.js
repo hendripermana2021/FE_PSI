@@ -28,7 +28,7 @@ const DetailRoles = (props) => {
         aria-labelledby="VerticallyCenteredScrollableExample2"
       >
         <CModalHeader>
-          <CModalTitle id="VerticallyCenteredScrollableExample2">Update Programs</CModalTitle>
+          <CModalTitle id="VerticallyCenteredScrollableExample2">Detail Role</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CRow>
@@ -36,8 +36,8 @@ const DetailRoles = (props) => {
               <CFormInput
                 type="text"
                 id="floatingtext"
-                floatingLabel="Name Program"
-                placeholder="Name Program"
+                floatingLabel="Role Name"
+                placeholder="Role Name"
                 value={data.role_name}
                 readOnly
               />

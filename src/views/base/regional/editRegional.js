@@ -39,7 +39,16 @@ const EditRegional = ({ province: data, dataRegion: region, refreshTable }) => {
       })
       setProvinceList(response.data.data)
     } catch (error) {
-      console.error('Error fetching province:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Province data')
+      }
+      console.log(error, 'Error fetching data')
     } finally {
       setLoading(false)
     }
@@ -91,7 +100,13 @@ const EditRegional = ({ province: data, dataRegion: region, refreshTable }) => {
         Edit Data
       </CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        scrollable
+        backdrop="static"
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Update Region</CModalTitle>
         </CModalHeader>

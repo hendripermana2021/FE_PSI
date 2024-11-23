@@ -1,27 +1,9 @@
 import React from 'react'
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardFooter,
-  CCardGroup,
-  CCardHeader,
-  CCardImage,
-  CCardLink,
-  CCardSubtitle,
-  CCardText,
-  CCardTitle,
-  CListGroup,
-  CListGroupItem,
-  CNav,
-  CNavItem,
-  CNavLink,
-  CCol,
-  CRow,
-} from '@coreui/react'
+import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
 import { DocsExample } from 'src/components'
 
 import ReactImg from 'src/assets/images/react.jpg'
+import { constantaSource } from '../../constantaEnv'
 import TableGenerate from './Table-generate'
 
 const Generate = () => {
@@ -30,7 +12,8 @@ const Generate = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>Page Generate</strong>
+            <strong>Generate Page</strong>
+            <small> {String(constantaSource.PageHeader)}</small>
           </CCardHeader>
           <CCardBody>
             <TableGenerate />

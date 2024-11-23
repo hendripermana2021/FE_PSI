@@ -107,10 +107,16 @@ const EditKriteria = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(!visible)}>Update Kriteria</CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CButton onClick={() => setVisible(!visible)}>Edit Kriteria</CButton>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
-          <CModalTitle>Update Sub Kriteria</CModalTitle>
+          <CModalTitle>Update Kriteria & Sub Kriteria</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm onSubmit={handleUpdate}>

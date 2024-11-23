@@ -52,8 +52,9 @@ const Login = () => {
         icon: 'success',
         title: 'Login Success',
         text: 'You have successfully logged in!',
+      }).then(() => {
+        navigate('/dashboard')
       })
-      navigate('/dashboard')
     } catch (error) {
       setIsSubmitting(false)
 

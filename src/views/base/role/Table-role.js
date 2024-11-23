@@ -32,7 +32,11 @@ const TableRole = () => {
         const tableInterval = setInterval(() => {
           if ($('#tableRole').is(':visible')) {
             clearInterval(tableInterval)
-            $('#tableRole').DataTable()
+            $('#tableRole').DataTable({
+              language: {
+                emptyTable: 'No Role available',
+              },
+            })
           }
         }, 1000)
       })
@@ -51,7 +55,16 @@ const TableRole = () => {
       setLoading(false)
       console.log(sessionStorage.getItem('accessToken'))
     } catch (error) {
-      console.error('Error fetching room data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Role data')
+      }
+      console.log(error, 'Error fetching data')
       setLoading(false)
     }
   }
@@ -114,7 +127,9 @@ const TableRole = () => {
                   </tr>
                 ) : role.length === 0 ? (
                   <tr>
-                    <td colSpan="3">No Role available</td>
+                    <td colSpan="3" className="text-center">
+                      No Role available
+                    </td>
                   </tr>
                 ) : (
                   role.map((roles, index) => (
@@ -130,10 +145,12 @@ const TableRole = () => {
                               <EditRoles refreshTable={getRole} role={roles} />
                             </CDropdownItem>
                             <CDropdownItem>
-                              <DetailRoles role={roles} />
+                              <DetailRoles type="button" role={roles} />
                             </CDropdownItem>
                             <CDropdownItem>
-                              <CButton onClick={() => deleteHandler(roles)}>Delete Data</CButton>
+                              <CButton type="button" onClick={() => deleteHandler(roles)}>
+                                Delete Data
+                              </CButton>
                             </CDropdownItem>
                           </CDropdownMenu>
                         </CDropdown>

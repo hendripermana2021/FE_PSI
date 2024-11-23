@@ -95,7 +95,13 @@ const CreateKriteria = (props) => {
       <CButton onClick={() => setVisible(!visible)} color="primary">
         Add Kriteria
       </CButton>
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Create New Kriteria and Sub Kriteria</CModalTitle>
         </CModalHeader>

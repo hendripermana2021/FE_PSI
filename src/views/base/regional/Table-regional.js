@@ -11,7 +11,12 @@ import {
   CDropdownItem,
   CDropdownToggle,
   CDropdownDivider,
+  CAccordion,
+  CAccordionItem,
+  CAccordionHeader,
+  CAccordionBody,
 } from '@coreui/react'
+
 import 'datatables.net-dt/css/dataTables.dataTables.min.css'
 import 'datatables.net-dt/js/dataTables.dataTables'
 import $ from 'jquery'
@@ -44,7 +49,16 @@ const TableRegional = () => {
       setProvinceSub(response.data.data)
       setLoading(false)
     } catch (error) {
-      console.error('Error fetching region data:', error)
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching Region data')
+      }
+      console.log(error, 'Error fetching data')
       setLoading(false)
     }
   }
@@ -105,6 +119,8 @@ const TableRegional = () => {
     })
   }
 
+  console.log('result disini', provinceSub)
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -115,9 +131,9 @@ const TableRegional = () => {
                 <strong>Regional Table</strong> <small>{constantaSource.tableHeader}</small>
               </CCol>
               <CCol md={3} className="text-end">
-                <AddRegional refreshTable={getProvinceSub} />
-                {'  '}
                 <AddProvince refreshTable={getProvinceSub} />
+                {'  '}
+                <AddRegional refreshTable={getProvinceSub} />
               </CCol>
             </CRow>
           </CCardHeader>
@@ -142,84 +158,68 @@ const TableRegional = () => {
                   </tr>
                 ) : (
                   provinceSub.map((provinces, provinceIndex) => (
-                    <React.Fragment key={provinceIndex}>
-                      <tr>
-                        <td className="text-center" rowSpan={provinces.region.length}>
-                          {provinceIndex + 1}
-                        </td>
-                        <td rowSpan={provinces.region.length}>{provinces.name_province}</td>
-                        <td>
-                          {provinces.region[0]?.name_region ? (
-                            <CRow>
-                              <CCol>{provinces.region[0]?.name_region}</CCol>
-                              <CCol>
-                                <CButton
-                                  color="danger"
-                                  onClick={() => deleteRegional(provinces.region[0])}
-                                >
-                                  Delete
-                                </CButton>{' '}
-                                <EditRegional
-                                  province={provinces}
-                                  dataRegion={provinces.region[0]}
-                                  refreshTable={getProvinceSub}
-                                />
-                              </CCol>
-                            </CRow>
-                          ) : (
-                            'kosong'
-                          )}
-                        </td>
-                        <td rowSpan={provinces.region.length} className="text-center">
-                          <CDropdown variant="btn-group">
-                            <CButton color="primary">Action</CButton>
-                            <CDropdownToggle color="primary" split />
-                            <CDropdownMenu>
-                              <CDropdownItem>
-                                <EditProvince province={provinces} refreshTable={getProvinceSub} />
-                              </CDropdownItem>
-                              <CDropdownItem>
-                                <DetailRegional regional={provinces} />
-                              </CDropdownItem>
-                              <CDropdownDivider />
-                              <CDropdownItem type="button" onClick={() => deleteHandler(provinces)}>
-                                Delete Data
-                              </CDropdownItem>
-                            </CDropdownMenu>
-                          </CDropdown>
-                        </td>
-                      </tr>
-
-                      {/* Render the remaining regions for the current province */}
-                      {provinces.region.slice(1).map((region, regionIndex) => (
-                        <tr key={regionIndex}>
-                          <td>
-                            {provinces.region[0]?.name_region ? (
-                              <CRow>
-                                <CCol>{region.name_region}</CCol>
-                                <CCol>
-                                  <CButton
-                                    color="danger"
-                                    onClick={() =>
-                                      deleteRegional(provinces.region[regionIndex + 1])
-                                    }
-                                  >
-                                    Delete
-                                  </CButton>{' '}
-                                  <EditRegional
-                                    province={provinces}
-                                    dataRegion={region}
-                                    refreshTable={getProvinceSub}
-                                  />
-                                </CCol>
-                              </CRow>
-                            ) : (
-                              ''
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
+                    <tr key={provinceIndex}>
+                      <td className="text-center">{provinceIndex + 1}</td>
+                      <td>{provinces.name_province}</td>
+                      <td>
+                        <CAccordion>
+                          <CAccordionItem itemKey={provinceIndex} key={provinceIndex}>
+                            <CAccordionHeader>Region {provinces.name_province}</CAccordionHeader>
+                            <CAccordionBody>
+                              <table className="table table-hover ">
+                                <thead>
+                                  <th className="text-center">No</th>
+                                  <th className="text-center">Name Region</th>
+                                  <th className="text-center">Action</th>
+                                </thead>
+                                <tbody>
+                                  {provinces.region
+                                    ? provinces.region.map((region, index) => (
+                                        <tr key={index}>
+                                          <td className="text-center">{index + 1}</td>
+                                          <td className="text-center">{region.name_region}</td>
+                                          <td className="text-center" key={index}>
+                                            {' '}
+                                            <CButton
+                                              color="danger"
+                                              onClick={() => deleteRegional(region)}
+                                            >
+                                              Delete
+                                            </CButton>{' '}
+                                            <EditRegional
+                                              province={provinces}
+                                              dataRegion={region}
+                                              refreshTable={getProvinceSub}
+                                            />
+                                          </td>
+                                        </tr>
+                                      ))
+                                    : 'kosong'}
+                                </tbody>
+                              </table>
+                            </CAccordionBody>
+                          </CAccordionItem>
+                        </CAccordion>
+                      </td>
+                      <td className="text-center">
+                        <CDropdown variant="btn-group">
+                          <CButton color="primary">Action</CButton>
+                          <CDropdownToggle color="primary" split />
+                          <CDropdownMenu>
+                            <CDropdownItem>
+                              <EditProvince province={provinces} refreshTable={getProvinceSub} />
+                            </CDropdownItem>
+                            <CDropdownItem>
+                              <DetailRegional regional={provinces} />
+                            </CDropdownItem>
+                            <CDropdownDivider />
+                            <CDropdownItem type="button" onClick={() => deleteHandler(provinces)}>
+                              Delete Data
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </td>
+                    </tr>
                   ))
                 )}
               </tbody>

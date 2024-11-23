@@ -6,7 +6,7 @@ import TableKriteria from './Table-kriteria'
 const Kriteria = () => {
   return (
     <CRow>
-      <CCol xs={12}>
+      <CCol xs={12} md={12}>
         <CCard className="mb-4">
           <CCardHeader>
             <strong>Kriteria Page</strong>

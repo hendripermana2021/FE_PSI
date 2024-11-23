@@ -60,6 +60,8 @@ const AddPrograms = (props) => {
         }).then(() => {
           setVisible(false)
           refreshTable()
+          setNameProgram('')
+          setDana('')
         })
       }
     } catch (error) {
@@ -77,10 +79,16 @@ const AddPrograms = (props) => {
   return (
     <>
       <CButton onClick={() => setVisible(true)} color="primary">
-        Tambah Program
+        Add Program
       </CButton>
 
-      <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
+      <CModal
+        alignment="center"
+        backdrop="static"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>Tambah Program</CModalTitle>
         </CModalHeader>

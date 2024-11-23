@@ -12,6 +12,11 @@ import {
   CDropdownToggle,
   CDropdownDivider,
   CTooltip,
+  CAccordionItem,
+  CAccordionHeader,
+  CAccordionBody,
+  CAccordion,
+  CBadge,
 } from '@coreui/react'
 import 'datatables.net-dt/css/dataTables.dataTables.min.css'
 import 'datatables.net-dt/js/dataTables.dataTables'
@@ -41,10 +46,19 @@ const TableKriteria = () => {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
       })
-      console.log(response.data.data)
+      console.log('data diterima', response.data.data)
       setKriteria(response.data.data)
       setLoading(false)
     } catch (error) {
+      if (error.response.status === 400) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Data Tidak Ada',
+          text: 'Maaf Data tidak ditemukan atau belum dibuat',
+        })
+      } else {
+        handleError(error, 'Error fetching kriteria data')
+      }
       console.error('Error fetching region data:', error)
       setLoading(false)
     }
@@ -89,7 +103,7 @@ const TableKriteria = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`${serverSourceDev}sub-kriteria/delete/${data.id}`, {
+          await axios.delete(`${serverSourceDev}sub-kriteria/delete/${data}`, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
             },
@@ -106,7 +120,7 @@ const TableKriteria = () => {
 
   return (
     <CRow>
-      <CCol xs={12}>
+      <CCol xs={12} md={12}>
         <CCard className="mb-4">
           <CCardHeader>
             <CRow>
@@ -123,167 +137,98 @@ const TableKriteria = () => {
             <table className="table table-hover " id="TableKriteria">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Name Kriteria</th>
-                  <th>Type</th>
-                  <th>Sub-Kriteria</th>
-                  <th>Value Sub</th>
-                  <th>Description</th>
-                  <th>Action</th>
+                  <th className="text-center">ID</th>
+                  <th className="text-center">Name Kriteria</th>
+                  <th className="text-center">Type</th>
+                  <th className="text-center">Sub-Kriteria</th>
+                  <th className="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7">Loading...</td>
+                    <td colSpan="5">Loading...</td>
                   </tr>
                 ) : kriteria.length === 0 ? (
                   <tr>
-                    <td colSpan="7">No data available</td>
+                    <td colSpan="5" className="text-center">
+                      No data available
+                    </td>
                   </tr>
                 ) : (
                   kriteria.map((kriterias, index) => (
-                    <React.Fragment key={index}>
-                      <tr>
-                        <td className="text-center" rowSpan={kriterias.sub_kriteria.length}>
-                          {index + 1}
-                        </td>
-                        <td className="text-center" rowSpan={kriterias.sub_kriteria.length}>
-                          {kriterias.name_kriteria}
-                        </td>
-                        <td className="text-center" rowSpan={kriterias.sub_kriteria.length}>
-                          {kriterias.type ? (
-                            <strong>
-                              <span>Profit</span>
-                            </strong>
-                          ) : (
-                            <span>Cost</span>
-                          )}
-                        </td>
-                        <td>
-                          {kriterias.sub_kriteria[0]?.name_sub ? (
-                            <CRow>
-                              <CCol>{kriterias.sub_kriteria[0]?.name_sub}</CCol>
-                              <CCol>
-                                <CButton
-                                  color="danger"
-                                  onClick={() => deleteSubKriteria(kriterias.sub_kriteria[0])}
-                                >
-                                  Delete
-                                </CButton>{' '}
-                                <EditSubKriteria
-                                  kriteria={kriterias}
-                                  dataSub={kriterias.sub_kriteria[0]}
-                                  refreshTable={getKriteria}
-                                />
-                              </CCol>
-                            </CRow>
-                          ) : (
-                            'kosong'
-                          )}
-                        </td>
-                        <td>
-                          {kriterias.sub_kriteria[0]?.value ? (
-                            <CRow>
-                              <CCol>{kriterias.sub_kriteria[0]?.value}</CCol>
-                            </CRow>
-                          ) : (
-                            'kosong'
-                          )}
-                        </td>
-                        <td>
-                          {kriterias.sub_kriteria[0]?.description ? (
-                            <CRow>
-                              {' '}
-                              <CCol>
-                                <CTooltip
-                                  content={kriterias.sub_kriteria[0]?.description}
-                                  placement="top"
-                                >
-                                  <CButton color="secondary">C</CButton>
-                                </CTooltip>
-                              </CCol>
-                            </CRow>
-                          ) : (
-                            'kosong'
-                          )}
-                        </td>
-                        <td rowSpan={kriterias.sub_kriteria.length} className="text-center">
-                          <CDropdown variant="btn-group">
-                            <CButton color="primary">Action</CButton>
-                            <CDropdownToggle color="primary" split />
-                            <CDropdownMenu>
-                              <CDropdownItem>
-                                <EditKriteria kriteria={kriterias} refreshTable={getKriteria} />
-                              </CDropdownItem>
-                              <CDropdownItem>
-                                <DetailKriteria kriteria={kriterias} />
-                              </CDropdownItem>
-                              <CDropdownDivider />
-                              <CDropdownItem
-                                type="button"
-                                onClick={() => deleteKriteria(kriterias)}
-                              >
-                                Delete Kriteria
-                              </CDropdownItem>
-                            </CDropdownMenu>
-                          </CDropdown>
-                        </td>
-                      </tr>
-
-                      {/* Render the remaining regions for the current province */}
-                      {kriterias.sub_kriteria.slice(1).map((region, regionIndex) => (
-                        <tr key={regionIndex}>
-                          <td>
-                            {kriterias.sub_kriteria[0]?.name_sub ? (
-                              <CRow>
-                                <CCol>{region.name_sub}</CCol>
-                                <CCol>
-                                  <CButton
-                                    color="danger"
-                                    onClick={() =>
-                                      deleteSubKriteria(kriterias.sub_kriteria[regionIndex + 1])
-                                    }
-                                  >
-                                    Delete
-                                  </CButton>{' '}
-                                  <EditSubKriteria
-                                    kriteria={kriterias}
-                                    dataSub={region}
-                                    refreshTable={getKriteria}
-                                  />
-                                </CCol>
-                              </CRow>
-                            ) : (
-                              ''
-                            )}
-                          </td>
-                          <td>
-                            {kriterias.sub_kriteria[0]?.value ? (
-                              <CRow>
-                                <CCol>{region.value}</CCol>
-                              </CRow>
-                            ) : (
-                              ''
-                            )}
-                          </td>
-                          <td>
-                            {kriterias.sub_kriteria[0]?.description ? (
-                              <CRow>
-                                {' '}
-                                <CCol>
-                                  <CTooltip content={region.description} placement="top">
-                                    <CButton color="secondary">C</CButton>
-                                  </CTooltip>
-                                </CCol>
-                              </CRow>
-                            ) : (
-                              ''
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </React.Fragment>
+                    <tr key={index}>
+                      <td className="text-center">{index + 1}</td>
+                      <td>{kriterias.name_kriteria}</td>
+                      <td className="text-center">
+                        {kriterias.type ? (
+                          <CBadge color="success">Profit</CBadge>
+                        ) : (
+                          <CBadge color="danger">Cost</CBadge>
+                        )}
+                      </td>
+                      <td>
+                        <CAccordion>
+                          <CAccordionItem itemKey={index} key={index}>
+                            <CAccordionHeader>Sub-Kriteria</CAccordionHeader>
+                            <CAccordionBody>
+                              <table className="table table-hover ">
+                                <thead>
+                                  <th className="text-center">No</th>
+                                  <th className="text-center">Name Sub</th>
+                                  <th className="text-center">Value</th>
+                                  <th className="text-center">Description</th>
+                                  <th className="text-center">Action</th>
+                                </thead>
+                                {kriterias.sub_kriteria.map((subKriteria, index) => (
+                                  <tr key={index}>
+                                    <td className="mb-3">{index + 1}</td>
+                                    <td>{subKriteria.name_sub}</td>
+                                    <td>{subKriteria.value}</td>
+                                    <td className="text-center">
+                                      <CTooltip content={subKriteria.description} placement="top">
+                                        <CButton color="secondary">C</CButton>
+                                      </CTooltip>
+                                    </td>
+                                    <td className="text-center">
+                                      <CButton
+                                        color="danger"
+                                        onClick={() => deleteSubKriteria(subKriteria.id)}
+                                      >
+                                        Delete
+                                      </CButton>{' '}
+                                      <EditSubKriteria
+                                        kriteria={kriterias}
+                                        dataSub={kriterias.sub_kriteria[index]}
+                                        refreshTable={getKriteria}
+                                      />
+                                    </td>
+                                  </tr>
+                                ))}
+                              </table>
+                            </CAccordionBody>
+                          </CAccordionItem>
+                        </CAccordion>
+                      </td>
+                      <td className="text-center">
+                        <CDropdown variant="btn-group">
+                          <CButton color="primary">Action</CButton>
+                          <CDropdownToggle color="primary" split />
+                          <CDropdownMenu>
+                            <CDropdownItem>
+                              <EditKriteria kriteria={kriterias} refreshTable={getKriteria} />
+                            </CDropdownItem>
+                            <CDropdownItem>
+                              <DetailKriteria kriteria={kriterias} />
+                            </CDropdownItem>
+                            <CDropdownDivider />
+                            <CDropdownItem type="button" onClick={() => deleteKriteria(kriterias)}>
+                              Delete Kriteria
+                            </CDropdownItem>
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </td>
+                    </tr>
                   ))
                 )}
               </tbody>
