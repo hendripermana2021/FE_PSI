@@ -146,7 +146,7 @@ const AddProgramKriteria = ({ kriteria: initialData, refreshTable }) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(true)} color="primary">
+      <CButton onClick={() => setVisible(true)} variant="outline" color="primary">
         Add Program Kriteria
       </CButton>
       <CModal

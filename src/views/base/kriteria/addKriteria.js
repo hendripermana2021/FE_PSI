@@ -92,7 +92,7 @@ const CreateKriteria = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(!visible)} color="primary">
+      <CButton onClick={() => setVisible(!visible)} variant="outline" color="primary">
         Add Kriteria
       </CButton>
       <CModal

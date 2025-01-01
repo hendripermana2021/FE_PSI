@@ -105,3 +105,11 @@ export function getDateTimeString(date = new Date(), includeTime = false) {
   // Return only the date in MM/DD/YYYY format
   return datePart
 }
+
+export function toProper(str) {
+  return str
+    .toLowerCase() // Mengubah seluruh string menjadi huruf kecil
+    .split(' ') // Memecah string menjadi array kata
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Mengubah huruf pertama menjadi besar
+    .join(' ') // Menggabungkan kembali array kata menjadi string
+}

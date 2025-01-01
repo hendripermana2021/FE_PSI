@@ -79,7 +79,7 @@ const TableGenerate = () => {
   const getAjuan = async (programId) => {
     setLoading(true)
     try {
-      const response = await axios.get(`${serverSourceDev}ajuan/program/${programId}`, {
+      const response = await axios.get(`${serverSourceDev}ajuan/program/generated/${programId}`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
@@ -319,39 +319,33 @@ const TableGenerate = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  ''
-                ) : ajuan.length === 0 ? (
-                  <tr>
-                    <td colSpan="9" className="text-center">
-                      No Ajuan available
-                    </td>
-                  </tr>
-                ) : (
-                  ajuan.map(
-                    (programs, index) =>
-                      (
-                        <tr key={index}>
-                          <td className="text-center">{index + 1}</td>
-                          <td>{programs?.users.name || '-'}</td>
-                          <td>{programs?.province.name_province || '-'}</td>
-                          <td>{programs?.region.name_region || '-'}</td>
-                          <td>{formatRupiah(programs.jlh_dana || 0)}</td>
-                          <td>{toDecimal(programs?.psi_result) || 0}</td>
-                          <td>{programs?.rank || 'N/A'}</td>
-                          <td>{programs?.commented || '-'}</td>
-                          <td>
-                            {' '}
-                            {programs?.req_status ? (
-                              <CBadge color="danger">Belum Disetujui</CBadge>
-                            ) : (
-                              <CBadge color="success">Disetujui</CBadge>
-                            )}{' '}
-                          </td>
-                        </tr>
-                      ) || '',
-                  )
-                )}
+                {loading
+                  ? ''
+                  : ajuan.length === 0
+                    ? ''
+                    : ajuan.map(
+                        (programs, index) =>
+                          (
+                            <tr key={index}>
+                              <td className="text-center">{index + 1}</td>
+                              <td>{programs?.users.name || '-'}</td>
+                              <td>{programs?.province.name_province || '-'}</td>
+                              <td>{programs?.region.name_region || '-'}</td>
+                              <td>{formatRupiah(programs.jlh_dana || 0)}</td>
+                              <td>{toDecimal(programs?.psi_result) || 0}</td>
+                              <td>{programs?.rank || 'N/A'}</td>
+                              <td>{programs?.commented || '-'}</td>
+                              <td>
+                                {' '}
+                                {programs?.req_status ? (
+                                  <CBadge color="danger">Belum Disetujui</CBadge>
+                                ) : (
+                                  <CBadge color="success">Disetujui</CBadge>
+                                )}{' '}
+                              </td>
+                            </tr>
+                          ) || '',
+                      )}
               </tbody>
             </table>
           </CCardBody>

@@ -8,6 +8,8 @@ import {
   CWidgetStatsF,
   CWidgetStatsD,
   CWidgetStatsB,
+  CProgressStacked,
+  CProgress,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
@@ -22,9 +24,11 @@ import {
 import { CChartLine } from '@coreui/react-chartjs'
 import TableAjuan from '../base/ajuan_wilayah/Table-ajuan'
 import axios from 'axios'
-import { serverSourceDev } from '../constantaEnv'
+// import { serverSourceDev } from '../constantaEnv'
 import Swal from 'sweetalert2' // Ensure Swal is imported
-import { formatRupiah } from '../functionGlobal'
+import { serverSourceDev } from '../../constant/constantaEnv'
+import { formatRupiah } from '../../constant/functionGlobal'
+// import { formatRupiah } from '../functionGlobal'
 
 const Dashboard = () => {
   const [dataDashboard, setDataDashboard] = useState(null) // Start with null to safely check currentUser

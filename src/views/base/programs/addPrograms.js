@@ -78,7 +78,7 @@ const AddPrograms = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(true)} color="primary">
+      <CButton onClick={() => setVisible(true)} variant="outline" color="primary">
         Add Program
       </CButton>
 

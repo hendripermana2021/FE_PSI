@@ -145,92 +145,90 @@ const TableKriteria = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="5">Loading...</td>
-                  </tr>
-                ) : kriteria.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center">
-                      No data available
-                    </td>
-                  </tr>
-                ) : (
-                  kriteria.map((kriterias, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td>{kriterias.name_kriteria}</td>
-                      <td className="text-center">
-                        {kriterias.type ? (
-                          <CBadge color="success">Profit</CBadge>
-                        ) : (
-                          <CBadge color="danger">Cost</CBadge>
-                        )}
-                      </td>
-                      <td>
-                        <CAccordion>
-                          <CAccordionItem itemKey={index} key={index}>
-                            <CAccordionHeader>Sub-Kriteria</CAccordionHeader>
-                            <CAccordionBody>
-                              <table className="table table-hover ">
-                                <thead>
-                                  <th className="text-center">No</th>
-                                  <th className="text-center">Name Sub</th>
-                                  <th className="text-center">Value</th>
-                                  <th className="text-center">Description</th>
-                                  <th className="text-center">Action</th>
-                                </thead>
-                                {kriterias.sub_kriteria.map((subKriteria, index) => (
-                                  <tr key={index}>
-                                    <td className="mb-3">{index + 1}</td>
-                                    <td>{subKriteria.name_sub}</td>
-                                    <td>{subKriteria.value}</td>
-                                    <td className="text-center">
-                                      <CTooltip content={subKriteria.description} placement="top">
-                                        <CButton color="secondary">C</CButton>
-                                      </CTooltip>
-                                    </td>
-                                    <td className="text-center">
-                                      <CButton
-                                        color="danger"
-                                        onClick={() => deleteSubKriteria(subKriteria.id)}
-                                      >
-                                        Delete
-                                      </CButton>{' '}
-                                      <EditSubKriteria
-                                        kriteria={kriterias}
-                                        dataSub={kriterias.sub_kriteria[index]}
-                                        refreshTable={getKriteria}
-                                      />
-                                    </td>
-                                  </tr>
-                                ))}
-                              </table>
-                            </CAccordionBody>
-                          </CAccordionItem>
-                        </CAccordion>
-                      </td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group">
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>
-                              <EditKriteria kriteria={kriterias} refreshTable={getKriteria} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <DetailKriteria kriteria={kriterias} />
-                            </CDropdownItem>
-                            <CDropdownDivider />
-                            <CDropdownItem type="button" onClick={() => deleteKriteria(kriterias)}>
-                              Delete Kriteria
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {loading
+                  ? ''
+                  : kriteria.length === 0
+                    ? ''
+                    : kriteria.map((kriterias, index) => (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{kriterias.name_kriteria || 'N/A'}</td>
+                          <td className="text-center">
+                            {kriterias.type ? (
+                              <CBadge color="success">Profit</CBadge>
+                            ) : (
+                              <CBadge color="danger">Cost</CBadge>
+                            )}
+                          </td>
+                          <td>
+                            <CAccordion>
+                              <CAccordionItem itemKey={index} key={index}>
+                                <CAccordionHeader>Sub-Kriteria</CAccordionHeader>
+                                <CAccordionBody>
+                                  <table className="table table-hover ">
+                                    <thead>
+                                      <th className="text-center">No</th>
+                                      <th className="text-center">Name Sub</th>
+                                      <th className="text-center">Value</th>
+                                      <th className="text-center">Description</th>
+                                      <th className="text-center">Action</th>
+                                    </thead>
+                                    {kriterias.sub_kriteria.map((subKriteria, index) => (
+                                      <tr key={index}>
+                                        <td className="mb-3">{index + 1}</td>
+                                        <td>{subKriteria.name_sub || 'N/A'}</td>
+                                        <td>{subKriteria.value || 'N/A'}</td>
+                                        <td className="text-center">
+                                          <CTooltip
+                                            content={subKriteria.description || 'N/A'}
+                                            placement="top"
+                                          >
+                                            <CButton color="secondary">C</CButton>
+                                          </CTooltip>
+                                        </td>
+                                        <td className="text-center">
+                                          <CButton
+                                            color="danger"
+                                            onClick={() => deleteSubKriteria(subKriteria.id)}
+                                          >
+                                            Delete
+                                          </CButton>{' '}
+                                          <EditSubKriteria
+                                            kriteria={kriterias}
+                                            dataSub={kriterias.sub_kriteria[index]}
+                                            refreshTable={getKriteria}
+                                          />
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </table>
+                                </CAccordionBody>
+                              </CAccordionItem>
+                            </CAccordion>
+                          </td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group">
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditKriteria kriteria={kriterias} refreshTable={getKriteria} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <DetailKriteria kriteria={kriterias} />
+                                </CDropdownItem>
+                                <CDropdownDivider />
+                                <CDropdownItem
+                                  type="button"
+                                  onClick={() => deleteKriteria(kriterias)}
+                                >
+                                  Delete Kriteria
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ))}
               </tbody>
             </table>
           </CCardBody>

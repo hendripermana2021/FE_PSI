@@ -161,63 +161,53 @@ const TableUsers = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="9" className="text-center">
-                      Loading...
-                    </td>
-                  </tr>
-                ) : users.length === 0 ? (
-                  <tr>
-                    <td colSpan="9" className="text-center">
-                      No Users available
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td>{user?.name || 'N/A'}</td>
-                      <td>{user?.sex || 'N/A'}</td>
-                      <td>{user?.email || 'N/A'}</td>
-                      <td>{user?.province?.name_province || 'N/A'}</td>
-                      <td>{user?.region?.name_region || 'N/A'}</td>
-                      <td className="text-center">
-                        {visiblePasswords[index] ? (
-                          <span>{user?.real_password || 'N/A'}</span>
-                        ) : (
-                          <span>••••••</span>
-                        )}
-                        <CButton
-                          color="link"
-                          size="sm"
-                          onClick={() => togglePasswordVisibility(index)}
-                          className="ms-2"
-                        >
-                          {visiblePasswords[index] ? <FaEyeSlash /> : <FaEye />}
-                        </CButton>
-                      </td>
-                      <td>{user?.role?.role_name || 'N/A'}</td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group" key={index}>
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>
-                              <EditUser user={user} role={role} refreshTable={getUsers} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <DetailUser user={user} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <CButton onClick={() => deleteHandler(user)}>Delete Data</CButton>
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {loading
+                  ? ''
+                  : users.length === 0
+                    ? ''
+                    : users.map((user, index) => (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{user?.name || 'N/A'}</td>
+                          <td>{user?.sex || 'N/A'}</td>
+                          <td>{user?.email || 'N/A'}</td>
+                          <td>{user?.province?.name_province || 'N/A'}</td>
+                          <td>{user?.region?.name_region || 'N/A'}</td>
+                          <td className="text-center">
+                            {visiblePasswords[index] ? (
+                              <span>{user?.real_password || 'N/A'}</span>
+                            ) : (
+                              <span>••••••</span>
+                            )}
+                            <CButton
+                              color="link"
+                              size="sm"
+                              onClick={() => togglePasswordVisibility(index)}
+                              className="ms-2"
+                            >
+                              {visiblePasswords[index] ? <FaEyeSlash /> : <FaEye />}
+                            </CButton>
+                          </td>
+                          <td>{user?.role?.role_name || 'N/A'}</td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group" key={index}>
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditUser user={user} role={role} refreshTable={getUsers} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <DetailUser user={user} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <CButton onClick={() => deleteHandler(user)}>Delete Data</CButton>
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ))}
               </tbody>
             </table>
           </CCardBody>

@@ -28,7 +28,7 @@ import EditPrograms from './editPrograms'
 import DetailPrograms from './detailPrograms'
 import AddPrograms from './addPrograms'
 import AddProgramKriteria from './addProgramKriteria'
-import { formatRupiah } from '../../../constant/functionGlobal'
+import { formatRupiah, toProper } from '../../../constant/functionGlobal'
 
 const TableProgram = () => {
   const [program, setProgram] = useState([])
@@ -144,76 +144,74 @@ const TableProgram = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="6">Loading...</td>
-                  </tr>
-                ) : program.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="text-center">
-                      No Program{' '}
-                    </td>
-                  </tr>
-                ) : (
-                  program.map((programs, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td className="text-center">{programs.name_program}</td>
-                      <td>
-                        <CAccordion>
-                          <CAccordionItem itemKey={index} key={index}>
-                            <CAccordionHeader>Kriteria</CAccordionHeader>
-                            <CAccordionBody>
-                              <table className="table table-hover ">
-                                <thead>
-                                  <th className="text-center">No</th>
-                                  <th className="text-center">Name Kriteria</th>
-                                  <th className="text-center">Action</th>
-                                </thead>
-                                {programs.programs_kriteria?.map((value, indexProgramKriteria) => (
-                                  <tr key={indexProgramKriteria}>
-                                    <td className="mb-3">{indexProgramKriteria + 1}</td>
-                                    <td>{value.kriteria.name_kriteria || ''}</td>
-                                    <td>
-                                      <CButton
-                                        color="danger"
-                                        onClick={() =>
-                                          deleteKriteria(
-                                            programs.programs_kriteria[indexProgramKriteria],
-                                          )
-                                        }
-                                      >
-                                        Delete
-                                      </CButton>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </table>
-                            </CAccordionBody>
-                          </CAccordionItem>
-                        </CAccordion>
-                      </td>
-                      <td className="text-center">{formatRupiah(programs.total_dana_alokasi)}</td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group" key={index}>
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>
-                              <EditPrograms refreshTable={getProgram} program={programs} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              {/* <DetailPrograms program={programs} /> */}
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <CButton onClick={() => deleteHandler(programs)}>Delete Data</CButton>
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {loading
+                  ? ''
+                  : program.length === 0
+                    ? ''
+                    : program.map((programs, index) => (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{toProper(programs.name_program) || 'N/A'}</td>
+                          <td>
+                            <CAccordion>
+                              <CAccordionItem itemKey={index} key={index}>
+                                <CAccordionHeader>Kriteria</CAccordionHeader>
+                                <CAccordionBody>
+                                  <table className="table table-hover ">
+                                    <thead>
+                                      <th className="text-center">No</th>
+                                      <th className="text-center">Name Kriteria</th>
+                                      <th className="text-center">Action</th>
+                                    </thead>
+                                    {programs.programs_kriteria?.map(
+                                      (value, indexProgramKriteria) => (
+                                        <tr key={indexProgramKriteria}>
+                                          <td className="mb-3">{indexProgramKriteria + 1}</td>
+                                          <td>{value.kriteria.name_kriteria || ''}</td>
+                                          <td>
+                                            <CButton
+                                              color="danger"
+                                              onClick={() =>
+                                                deleteKriteria(
+                                                  programs.programs_kriteria[indexProgramKriteria],
+                                                )
+                                              }
+                                            >
+                                              Delete
+                                            </CButton>
+                                          </td>
+                                        </tr>
+                                      ),
+                                    )}
+                                  </table>
+                                </CAccordionBody>
+                              </CAccordionItem>
+                            </CAccordion>
+                          </td>
+                          <td className="text-center">
+                            {formatRupiah(programs.total_dana_alokasi)}
+                          </td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group" key={index}>
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditPrograms refreshTable={getProgram} program={programs} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  {/* <DetailPrograms program={programs} /> */}
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <CButton onClick={() => deleteHandler(programs)}>
+                                    Delete Data
+                                  </CButton>
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ))}
               </tbody>
             </table>
           </CCardBody>

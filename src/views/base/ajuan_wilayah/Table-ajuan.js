@@ -182,59 +182,49 @@ const TableAjuan = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      Loading...
-                    </td>
-                  </tr>
-                ) : ajuan.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      No Ajuan available
-                    </td>
-                  </tr>
-                ) : (
-                  ajuan.map(
-                    (programs, index) =>
-                      (
-                        <tr key={index}>
-                          <td className="text-center">{index + 1}</td>
-                          <td>{programs?.users.name || '-'}</td>
-                          <td>{programs?.province.name_province || '-'}</td>
-                          <td>{programs?.region.name_region || '-'}</td>
-                          <td>{programs?.commented || '-'}</td>
-                          <td>
-                            {' '}
-                            {programs?.req_status ? (
-                              <CBadge color="danger">Belum Disetujui</CBadge>
-                            ) : (
-                              <CBadge color="success">Disetujui</CBadge>
-                            )}{' '}
-                          </td>
-                          <td className="text-center">
-                            <CDropdown variant="btn-group" key={index}>
-                              <CButton color="primary">Action</CButton>
-                              <CDropdownToggle color="primary" split />
-                              <CDropdownMenu>
-                                <CDropdownItem>
-                                  <EditAjuan ajuan={programs} refreshTable={getAjuan} />
-                                </CDropdownItem>
-                                <CDropdownItem>
-                                  <DetailAjuan ajuan={programs} />
-                                </CDropdownItem>
-                                <CDropdownItem>
-                                  <CButton onClick={() => deleteAjuan(programs)}>
-                                    Delete Ajuan
-                                  </CButton>
-                                </CDropdownItem>
-                              </CDropdownMenu>
-                            </CDropdown>
-                          </td>
-                        </tr>
-                      ) || '',
-                  )
-                )}
+                {loading
+                  ? ''
+                  : ajuan.length === 0
+                    ? ''
+                    : ajuan.map(
+                        (programs, index) =>
+                          (
+                            <tr key={index}>
+                              <td className="text-center">{index + 1}</td>
+                              <td>{programs?.users.name || '-'}</td>
+                              <td>{programs?.province.name_province || '-'}</td>
+                              <td>{programs?.region.name_region || '-'}</td>
+                              <td>{programs?.commented || '-'}</td>
+                              <td>
+                                {' '}
+                                {programs?.req_status ? (
+                                  <CBadge color="danger">Belum Disetujui</CBadge>
+                                ) : (
+                                  <CBadge color="success">Disetujui</CBadge>
+                                )}{' '}
+                              </td>
+                              <td className="text-center">
+                                <CDropdown variant="btn-group" key={index}>
+                                  <CButton color="primary">Action</CButton>
+                                  <CDropdownToggle color="primary" split />
+                                  <CDropdownMenu>
+                                    <CDropdownItem>
+                                      <EditAjuan ajuan={programs} refreshTable={getAjuan} />
+                                    </CDropdownItem>
+                                    <CDropdownItem>
+                                      <DetailAjuan ajuan={programs} />
+                                    </CDropdownItem>
+                                    <CDropdownItem>
+                                      <CButton onClick={() => deleteAjuan(programs)}>
+                                        Delete Ajuan
+                                      </CButton>
+                                    </CDropdownItem>
+                                  </CDropdownMenu>
+                                </CDropdown>
+                              </td>
+                            </tr>
+                          ) || '',
+                      )}
               </tbody>
             </table>
           </CCardBody>
@@ -268,44 +258,34 @@ const TableAjuan = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="8" className="text-center">
-                      Loading...
-                    </td>
-                  </tr>
-                ) : ajuanHistory.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center">
-                      No Ajuan History Available
-                    </td>
-                  </tr>
-                ) : (
-                  ajuanHistory.map(
-                    (programs, index) =>
-                      (
-                        <tr key={index}>
-                          <td className="text-center">{index + 1}</td>
-                          <td>{programs?.users.name || '-'}</td>
-                          <td>{programs?.province.name_province || '-'}</td>
-                          <td>{programs?.region.name_region || '-'}</td>
-                          <td>{programs?.commented || '-'}</td>
-                          <td>
-                            {' '}
-                            {programs?.req_status ? (
-                              <CBadge color="danger">Belum Disetujui</CBadge>
-                            ) : (
-                              <CBadge color="success">Disetujui</CBadge>
-                            )}{' '}
-                          </td>
-                          <td>{getDateTimeString(programs?.updatedAt, true) || '-'}</td>
-                          <td className="text-center">
-                            <DetailAjuan ajuan={programs} />
-                          </td>
-                        </tr>
-                      ) || '',
-                  )
-                )}
+                {loading
+                  ? ''
+                  : ajuanHistory.length === 0
+                    ? ''
+                    : ajuanHistory.map(
+                        (programs, index) =>
+                          (
+                            <tr key={index}>
+                              <td className="text-center">{index + 1}</td>
+                              <td>{programs?.users.name || '-'}</td>
+                              <td>{programs?.province.name_province || '-'}</td>
+                              <td>{programs?.region.name_region || '-'}</td>
+                              <td>{programs?.commented || '-'}</td>
+                              <td>
+                                {' '}
+                                {programs?.req_status ? (
+                                  <CBadge color="danger">Belum Disetujui</CBadge>
+                                ) : (
+                                  <CBadge color="success">Disetujui</CBadge>
+                                )}{' '}
+                              </td>
+                              <td>{getDateTimeString(programs?.updatedAt, true) || '-'}</td>
+                              <td className="text-center">
+                                <DetailAjuan ajuan={programs} />
+                              </td>
+                            </tr>
+                          ) || '',
+                      )}
               </tbody>
             </table>
           </CCardBody>

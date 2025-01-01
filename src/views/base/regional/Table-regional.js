@@ -148,80 +148,84 @@ const TableRegional = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="4">Loading...</td>
-                  </tr>
-                ) : provinceSub.length === 0 ? (
-                  <tr>
-                    <td colSpan="4">No data available</td>
-                  </tr>
-                ) : (
-                  provinceSub.map((provinces, provinceIndex) => (
-                    <tr key={provinceIndex}>
-                      <td className="text-center">{provinceIndex + 1}</td>
-                      <td>{provinces.name_province}</td>
-                      <td>
-                        <CAccordion>
-                          <CAccordionItem itemKey={provinceIndex} key={provinceIndex}>
-                            <CAccordionHeader>Region {provinces.name_province}</CAccordionHeader>
-                            <CAccordionBody>
-                              <table className="table table-hover ">
-                                <thead>
-                                  <th className="text-center">No</th>
-                                  <th className="text-center">Name Region</th>
-                                  <th className="text-center">Action</th>
-                                </thead>
-                                <tbody>
-                                  {provinces.region
-                                    ? provinces.region.map((region, index) => (
-                                        <tr key={index}>
-                                          <td className="text-center">{index + 1}</td>
-                                          <td className="text-center">{region.name_region}</td>
-                                          <td className="text-center" key={index}>
-                                            {' '}
-                                            <CButton
-                                              color="danger"
-                                              onClick={() => deleteRegional(region)}
-                                            >
-                                              Delete
-                                            </CButton>{' '}
-                                            <EditRegional
-                                              province={provinces}
-                                              dataRegion={region}
-                                              refreshTable={getProvinceSub}
-                                            />
-                                          </td>
-                                        </tr>
-                                      ))
-                                    : 'kosong'}
-                                </tbody>
-                              </table>
-                            </CAccordionBody>
-                          </CAccordionItem>
-                        </CAccordion>
-                      </td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group">
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>
-                              <EditProvince province={provinces} refreshTable={getProvinceSub} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <DetailRegional regional={provinces} />
-                            </CDropdownItem>
-                            <CDropdownDivider />
-                            <CDropdownItem type="button" onClick={() => deleteHandler(provinces)}>
-                              Delete Data
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {loading
+                  ? ''
+                  : provinceSub.length === 0
+                    ? ''
+                    : provinceSub.map((provinces, provinceIndex) => (
+                        <tr key={provinceIndex}>
+                          <td className="text-center">{provinceIndex + 1}</td>
+                          <td>{provinces.name_province || 'N/A'}</td>
+                          <td>
+                            <CAccordion>
+                              <CAccordionItem itemKey={provinceIndex} key={provinceIndex}>
+                                <CAccordionHeader>
+                                  Region {provinces.name_province}
+                                </CAccordionHeader>
+                                <CAccordionBody>
+                                  <table className="table table-hover ">
+                                    <thead>
+                                      <th className="text-center">No</th>
+                                      <th className="text-center">Name Region</th>
+                                      <th className="text-center">Action</th>
+                                    </thead>
+                                    <tbody>
+                                      {provinces.region
+                                        ? provinces.region.map((region, index) => (
+                                            <tr key={index}>
+                                              <td className="text-center">{index + 1}</td>
+                                              <td className="text-center">
+                                                {region.name_region || 'N/A'}
+                                              </td>
+                                              <td className="text-center" key={index}>
+                                                {' '}
+                                                <CButton
+                                                  color="danger"
+                                                  onClick={() => deleteRegional(region)}
+                                                >
+                                                  Delete
+                                                </CButton>{' '}
+                                                <EditRegional
+                                                  province={provinces}
+                                                  dataRegion={region}
+                                                  refreshTable={getProvinceSub}
+                                                />
+                                              </td>
+                                            </tr>
+                                          ))
+                                        : 'kosong'}
+                                    </tbody>
+                                  </table>
+                                </CAccordionBody>
+                              </CAccordionItem>
+                            </CAccordion>
+                          </td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group">
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditProvince
+                                    province={provinces}
+                                    refreshTable={getProvinceSub}
+                                  />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <DetailRegional regional={provinces} />
+                                </CDropdownItem>
+                                <CDropdownDivider />
+                                <CDropdownItem
+                                  type="button"
+                                  onClick={() => deleteHandler(provinces)}
+                                >
+                                  Delete Data
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ))}
               </tbody>
             </table>
           </CCardBody>

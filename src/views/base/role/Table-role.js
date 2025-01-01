@@ -27,20 +27,23 @@ const TableRole = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!$.fn.DataTable.isDataTable('#tableRole')) {
-      $(document).ready(function () {
-        const tableInterval = setInterval(() => {
-          if ($('#tableRole').is(':visible')) {
-            clearInterval(tableInterval)
-            $('#tableRole').DataTable({
-              language: {
-                emptyTable: 'No Role available',
-              },
-            })
-          }
-        }, 1000)
-      })
+    if ($.fn.DataTable.isDataTable('#tableRole')) {
+      $('#tableRole').DataTable().destroy()
     }
+
+    $(document).ready(function () {
+      const tableInterval = setInterval(() => {
+        if ($('#tableRole').is(':visible')) {
+          clearInterval(tableInterval)
+          $('#tableRole').DataTable({
+            language: {
+              emptyTable: 'No Role available',
+            },
+          })
+        }
+      }, 1000)
+    })
+
     getRole()
   }, [])
 
@@ -121,43 +124,35 @@ const TableRole = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="3">Loading...</td>
-                  </tr>
-                ) : role.length === 0 ? (
-                  <tr>
-                    <td colSpan="3" className="text-center">
-                      No Role available
-                    </td>
-                  </tr>
-                ) : (
-                  role.map((roles, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{index + 1}</td>
-                      <td>{roles.role_name}</td>
-                      <td className="text-center">
-                        <CDropdown variant="btn-group" key={index}>
-                          <CButton color="primary">Action</CButton>
-                          <CDropdownToggle color="primary" split />
-                          <CDropdownMenu>
-                            <CDropdownItem>
-                              <EditRoles refreshTable={getRole} role={roles} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <DetailRoles type="button" role={roles} />
-                            </CDropdownItem>
-                            <CDropdownItem>
-                              <CButton type="button" onClick={() => deleteHandler(roles)}>
-                                Delete Data
-                              </CButton>
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {loading
+                  ? ''
+                  : role.length === 0
+                    ? ''
+                    : role.map((roles, index) => (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{roles.role_name}</td>
+                          <td className="text-center">
+                            <CDropdown variant="btn-group" key={index}>
+                              <CButton color="primary">Action</CButton>
+                              <CDropdownToggle color="primary" split />
+                              <CDropdownMenu>
+                                <CDropdownItem>
+                                  <EditRoles refreshTable={getRole} role={roles} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <DetailRoles type="button" role={roles} />
+                                </CDropdownItem>
+                                <CDropdownItem>
+                                  <CButton type="button" onClick={() => deleteHandler(roles)}>
+                                    Delete Data
+                                  </CButton>
+                                </CDropdownItem>
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      ))}
               </tbody>
             </table>
           </CCardBody>
