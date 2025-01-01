@@ -1,6 +1,6 @@
 import React from 'react'
 import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
-import { constantaSource } from '../../constantaEnv'
+import { constantaSource } from '../../../constant/constantaEnv'
 import TableKriteria from './Table-kriteria'
 
 const Kriteria = () => {

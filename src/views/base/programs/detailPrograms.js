@@ -14,7 +14,7 @@ import {
 } from '@coreui/react'
 
 import propTypes from 'prop-types'
-import { formatRupiah } from '../../functionGlobal'
+import { formatRupiah } from '../../../constant/functionGlobal'
 
 const DetailPrograms = (props) => {
   const data = props.program // Change 'programs' to match props

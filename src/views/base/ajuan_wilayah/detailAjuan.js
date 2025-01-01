@@ -32,7 +32,7 @@ const DetailAjuan = (props) => {
   const [subKriteriaId, setSubKriteriaId] = useState(data.psi_data.id_subkriteria)
 
   return (
-    <>  
+    <>
       <CButton onClick={() => setVisible(true)}>Detail Ajuan</CButton>
 
       <CModal
@@ -99,14 +99,14 @@ const DetailAjuan = (props) => {
               {kriteriaList.map((kriteria, index) => (
                 <CCol md={6} key={kriteria.id} className="mb-3">
                   <h6>
-                    {index + 1 + '.   '} {kriteria.kriteria.name_kriteria}
+                    {index + 1 + '.   '} {kriteria.kriteria?.name_kriteria}
                   </h6>
                   <CFormFloating className="mb-3">
                     <CFormInput
                       type="text"
                       floatingLabel="Sub Kriteria"
                       label="sub kriteria"
-                      value={kriteria.subkriteria.name_sub}
+                      value={kriteria.subkriteria?.name_sub}
                       readOnly={true}
                     />
                   </CFormFloating>

@@ -4,7 +4,7 @@ import { DocsExample } from 'src/components'
 
 import ReactImg from 'src/assets/images/react.jpg'
 import TableAjuan from './Table-ajuan'
-import { constantaSource } from '../../constantaEnv'
+import { constantaSource } from '../../../constant/constantaEnv'
 
 const Ajuan = () => {
   return (

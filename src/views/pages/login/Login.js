@@ -15,9 +15,10 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import logoKesbangpol from '../../../assets/brand/logo-kesbangpol.png'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -87,6 +88,7 @@ const Login = () => {
                         placeholder="Username"
                         autoComplete="username"
                         value={email}
+                        required
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </CInputGroup>
@@ -99,6 +101,7 @@ const Login = () => {
                         placeholder="Password"
                         autoComplete="current-password"
                         value={password}
+                        required
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </CInputGroup>
@@ -119,18 +122,11 @@ const Login = () => {
               </CCard>
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
-                      </CButton>
-                    </Link>
-                  </div>
+                  <CRow>
+                    <CCol className="d-flex justify-content-center align-items-center">
+                      <img src={logoKesbangpol} alt="Your Image" className="img-fluid" />
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
             </CCardGroup>

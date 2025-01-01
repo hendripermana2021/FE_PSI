@@ -85,7 +85,7 @@ const ProfileModal = (props) => {
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={toggleModal}>
-            Cancel
+            Close
           </CButton>
         </CModalFooter>
       </CModal>

@@ -18,10 +18,13 @@ import 'datatables.net-dt/js/dataTables.dataTables'
 import $ from 'jquery'
 import 'jquery/dist/jquery.min.js'
 import axios from 'axios'
-import { constantaSource, serverSourceDev } from '../../constantaEnv'
+// import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
 import Swal from 'sweetalert2'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
+// import { toDecimal } from '../../../constant/functionGlobal'
+import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
+import { toDecimal } from '../../../constant/functionGlobal'
 
 const TableGenerate = () => {
   const [program, setProgram] = useState('') // Default to empty string
@@ -41,6 +44,7 @@ const TableGenerate = () => {
   useEffect(() => {
     if (program) {
       getAjuan(program)
+      setProcessRoc(false)
     }
   }, [program])
 
@@ -81,7 +85,7 @@ const TableGenerate = () => {
         },
       })
       setAjuan(response.data.data)
-      console.log(ajuan)
+      console.log('TEST', ajuan)
     } catch (error) {
       if (error.response.status === 404) {
         Swal.fire({
@@ -128,7 +132,7 @@ const TableGenerate = () => {
           console.log('process PSI response', response.data.data)
           Swal.fire('Success!', 'Generated PSI.', 'success')
         } catch (error) {
-          console.error('Error processing PSI:', error)
+          console.log('Error processing PSI:', error)
           Swal.fire('Error!', 'Failed to process PSI.', 'error')
         }
       }
@@ -316,14 +320,10 @@ const TableGenerate = () => {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr>
-                    <td colSpan="8" className="text-center">
-                      Loading...
-                    </td>
-                  </tr>
+                  ''
                 ) : ajuan.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="9" className="text-center">
                       No Ajuan available
                     </td>
                   </tr>
@@ -337,7 +337,7 @@ const TableGenerate = () => {
                           <td>{programs?.province.name_province || '-'}</td>
                           <td>{programs?.region.name_region || '-'}</td>
                           <td>{formatRupiah(programs.jlh_dana || 0)}</td>
-                          <td>{programs?.psi_result || 0}</td>
+                          <td>{toDecimal(programs?.psi_result) || 0}</td>
                           <td>{programs?.rank || 'N/A'}</td>
                           <td>{programs?.commented || '-'}</td>
                           <td>
@@ -418,7 +418,12 @@ const TableGenerate = () => {
                               {rumus.nilai?.map((ajuans, indexRumus) => (
                                 <tr key={indexRumus}>
                                   <td> {indexRumus + 1}</td>
-                                  <td>Alternatif {indexRumus + 1}</td>
+                                  <td>
+                                    {rumus.ajuan[indexRumus].users.name}{' '}
+                                    <CBadge color="secondary">
+                                      {rumus.ajuan[indexRumus].region.name_region}
+                                    </CBadge>
+                                  </td>
                                   {ajuans.map((values, index) => (
                                     <td key={index}>
                                       {' '}
@@ -441,7 +446,14 @@ const TableGenerate = () => {
                                 <th>ID</th>
                                 <th>Alternatif</th>
                                 {rumus.normalisasi?.[0].map((ajuans, index) => (
-                                  <th key={index}>Kriteria {index + 1}</th>
+                                  <th key={index}>
+                                    Kriteria {index + 1}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </th>
                                 ))}
                               </tr>
                             </thead>
@@ -449,7 +461,12 @@ const TableGenerate = () => {
                               {rumus.normalisasi?.map((ajuans, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Alternatif {index + 1}</td>
+                                  <td>
+                                    {rumus.ajuan[index].users.name}{' '}
+                                    <CBadge color="secondary">
+                                      {rumus.ajuan[index].region.name_region}
+                                    </CBadge>
+                                  </td>
                                   {ajuans.map((values, index) => (
                                     <td key={index}>
                                       {typeof values === 'number'
@@ -505,8 +522,15 @@ const TableGenerate = () => {
                               {rumus.SumNormalisasi?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
-                                  <td>{values}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
+                                  <td>{toDecimal(values)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -528,13 +552,20 @@ const TableGenerate = () => {
                               {rumus.SumNormalisasiArray?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
                                   <td>
                                     {' '}
                                     1 / {rumus.SumNormalisasi.length} *{' '}
-                                    {rumus.SumNormalisasi[index]}
+                                    {toDecimal(rumus.SumNormalisasi[index])}
                                   </td>
-                                  <td>{values}</td>
+                                  <td>{toDecimal(values)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -574,7 +605,14 @@ const TableGenerate = () => {
                                 <th>ID</th>
                                 <th>Alternatif</th>
                                 {rumus.normalisasi?.[0].map((ajuans, index) => (
-                                  <th key={index}>Kriteria {index + 1}</th>
+                                  <th key={index}>
+                                    Kriteria {index + 1}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </th>
                                 ))}
                               </tr>
                             </thead>
@@ -582,7 +620,12 @@ const TableGenerate = () => {
                               {rumus.normalisasi?.map((ajuans, indexAjuan) => (
                                 <tr key={indexAjuan}>
                                   <td> {indexAjuan + 1}</td>
-                                  <td>Alternatif {indexAjuan + 1}</td>
+                                  <td>
+                                    {rumus.ajuan[indexAjuan].users.name}{' '}
+                                    <CBadge color="secondary">
+                                      {rumus.ajuan[indexAjuan].region.name_region}
+                                    </CBadge>
+                                  </td>
                                   {ajuans.map((values, index) => (
                                     <td key={index} style={{ fontSize: '12px' }}>
                                       (
@@ -616,7 +659,14 @@ const TableGenerate = () => {
                                 <th>ID</th>
                                 <th>Alternatif</th>
                                 {rumus.normalisasi?.[0].map((ajuans, index) => (
-                                  <th key={index}>Kriteria {index + 1}</th>
+                                  <th key={index}>
+                                    Kriteria {index + 1}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </th>
                                 ))}
                               </tr>
                             </thead>
@@ -625,7 +675,12 @@ const TableGenerate = () => {
                                 <>
                                   <tr key={indexAjuan}>
                                     <td> {indexAjuan + 1}</td>
-                                    <td>Alternatif {indexAjuan + 1}</td>
+                                    <td>
+                                      {rumus.ajuan[indexAjuan].users.name}{' '}
+                                      <CBadge color="secondary">
+                                        {rumus.ajuan[indexAjuan].region.name_region}
+                                      </CBadge>
+                                    </td>
                                     {ajuans.map((values, index) => (
                                       <td key={index} style={{ fontSize: '12px' }}>
                                         {typeof values === 'number'
@@ -693,8 +748,15 @@ const TableGenerate = () => {
                               {rumus.SumDeviasi?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
-                                  <td>{values}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
+                                  <td>{toDecimal(values)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -716,7 +778,14 @@ const TableGenerate = () => {
                               {rumus.SumDeviasi?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
                                   <td>
                                     {' '}
                                     1 -{' '}
@@ -778,7 +847,14 @@ const TableGenerate = () => {
                               {rumus.SumBobotKr?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
                                   <td>
                                     {typeof values === 'number'
                                       ? new Intl.NumberFormat('en-US', {
@@ -821,7 +897,14 @@ const TableGenerate = () => {
                               {rumus.SumBobotKr?.map((values, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Kriteria {index + 1}</td>
+                                  <td>
+                                    {rumus.kriteria[index].kriteria.name_kriteria}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </td>
                                   <td>
                                     {' '}
                                     {typeof values === 'number'
@@ -884,7 +967,14 @@ const TableGenerate = () => {
                                 <th>ID</th>
                                 <th>Alternatif</th>
                                 {rumus.normalisasi?.[0].map((ajuans, index) => (
-                                  <th key={index}>Kriteria {index + 1}</th>
+                                  <th key={index}>
+                                    Kriteria {index + 1}{' '}
+                                    {rumus.statusKriteria[index] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </th>
                                 ))}
                               </tr>
                             </thead>
@@ -892,7 +982,12 @@ const TableGenerate = () => {
                               {rumus.normalisasi?.map((ajuans, index) => (
                                 <tr key={index}>
                                   <td> {index + 1}</td>
-                                  <td>Alternatif {index + 1}</td>
+                                  <td>
+                                    {rumus.ajuan[index].users.name}{' '}
+                                    <CBadge color="secondary">
+                                      {rumus.ajuan[index].region.name_region}
+                                    </CBadge>
+                                  </td>
                                   {ajuans.map((values, index) => (
                                     <td key={index}>
                                       {typeof values === 'number'
@@ -917,7 +1012,14 @@ const TableGenerate = () => {
                                 <th>ID</th>
                                 <th>Alternatif</th>
                                 {rumus.normalisasi?.[0].map((ajuans, indexAjuan) => (
-                                  <th key={indexAjuan}>Kriteria {indexAjuan + 1}</th>
+                                  <th key={indexAjuan}>
+                                    Kriteria {indexAjuan + 1}{' '}
+                                    {rumus.statusKriteria[indexAjuan] ? (
+                                      <CBadge color="success">B</CBadge>
+                                    ) : (
+                                      <CBadge color="danger">C</CBadge>
+                                    )}
+                                  </th>
                                 ))}
                                 <th>Result CPI</th>
                               </tr>
@@ -926,7 +1028,12 @@ const TableGenerate = () => {
                               {rumus.normalisasi?.map((ajuans, indexRumus) => (
                                 <tr key={indexRumus}>
                                   <td> {indexRumus + 1}</td>
-                                  <td>Alternatif {indexRumus + 1}</td>
+                                  <td>
+                                    {rumus.ajuan[indexRumus].users.name}{' '}
+                                    <CBadge color="secondary">
+                                      {rumus.ajuan[indexRumus].region.name_region}
+                                    </CBadge>
+                                  </td>
                                   {ajuans.map((values, index) => (
                                     <>
                                       <td key={index} style={{ fontSize: '14px' }}>
@@ -1026,9 +1133,9 @@ const TableGenerate = () => {
                                     </span>
                                   </h6>
                                   <p className="card-text">
-                                    <strong>Jumlah Orang:</strong>{' '}
+                                    <strong>Jumlah Wilayah:</strong>{' '}
                                     <span className="badge bg-info">
-                                      {roc.totalRankByPeople[index]} Orang
+                                      {roc.totalRankByPeople[index]} Wilayah
                                     </span>
                                   </p>
                                   <p className="card-text">
@@ -1102,7 +1209,7 @@ const TableGenerate = () => {
                                     {rank === 1 ? 1 : `1 / ${rank}`}
                                   </span>
                                   &nbsp; x &nbsp;
-                                  <strong>Jumlah Orang:</strong>{' '}
+                                  <strong>Jumlah Wilayah:</strong>{' '}
                                   <span
                                     style={{
                                       backgroundColor: '#17a2b8',
@@ -1111,7 +1218,7 @@ const TableGenerate = () => {
                                       borderRadius: '5px',
                                     }}
                                   >
-                                    {roc.totalRankByPeople[index]} Orang
+                                    {roc.totalRankByPeople[index]} Wilayah
                                   </span>
                                   &nbsp; = &nbsp;
                                   <span
@@ -1148,7 +1255,12 @@ const TableGenerate = () => {
                                   borderRadius: '5px',
                                 }}
                               >
-                                {roc.totalRankWeight}
+                                {typeof roc.totalRankWeight === 'number'
+                                  ? new Intl.NumberFormat('en-US', {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    }).format(roc.totalRankWeight)
+                                  : roc.totalRankWeight}
                               </span>
                             </p>
                           </div>
@@ -1196,12 +1308,12 @@ const TableGenerate = () => {
                                     borderRadius: '5px',
                                   }}
                                 >
-                                  {roc.totalRankByPeople[index]} orang
+                                  {roc.totalRankByPeople[index]} Wilayah
                                 </span>
                               </h6>
 
                               <p style={{ margin: '10px 0' }}>
-                                Setiap orang di Ranking {values} akan mendapatkan:
+                                Setiap Wilayah di Ranking {values} akan mendapatkan:
                               </p>
 
                               <ul style={{ paddingLeft: '20px', listStyleType: 'circle' }}>
@@ -1238,7 +1350,7 @@ const TableGenerate = () => {
                                         }).format(roc.totalRankWeight)
                                       : roc.totalRankWeight}
                                   </span>{' '}
-                                  x {roc.program?.total_dana_alokasi} ={' '}
+                                  x {formatRupiah(roc.program?.total_dana_alokasi)} ={' '}
                                   <span
                                     style={{
                                       backgroundColor: '#6c757d',
@@ -1247,12 +1359,7 @@ const TableGenerate = () => {
                                       borderRadius: '5px',
                                     }}
                                   >
-                                    {typeof roc.moneyForEveryRank[index] === 'number'
-                                      ? new Intl.NumberFormat('en-US', {
-                                          minimumFractionDigits: 2,
-                                          maximumFractionDigits: 2,
-                                        }).format(roc.moneyForEveryRank[index])
-                                      : roc.moneyForEveryRank[index]}
+                                    {formatRupiah(roc.moneyForEveryRank[index])}
                                   </span>
                                 </li>
                                 <li>
@@ -1265,7 +1372,7 @@ const TableGenerate = () => {
                                       borderRadius: '5px',
                                     }}
                                   >
-                                    {roc.totalRankByPeople[index]} orang
+                                    {roc.totalRankByPeople[index]} Wilayah
                                   </span>{' '}
                                   di Ranking {values} akan mendapatkan{' '}
                                   <span
@@ -1328,8 +1435,8 @@ const TableGenerate = () => {
 
                               <ul style={{ paddingLeft: '20px', listStyleType: 'circle' }}>
                                 <li>
-                                  Masing-masing orang di ranking {values} (
-                                  {roc.totalRankByPeople[index]} Orang) akan mendapatkan:
+                                  Masing-masing Wilayah di ranking {values} (
+                                  {roc.totalRankByPeople[index]} Wilayah) akan mendapatkan:
                                   <span
                                     style={{
                                       backgroundColor: '#6c757d',

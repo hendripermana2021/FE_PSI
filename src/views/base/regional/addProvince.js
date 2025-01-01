@@ -12,7 +12,7 @@ import {
   CForm,
   CFormSelect,
 } from '@coreui/react'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 import propTypes from 'prop-types'
 import Swal from 'sweetalert2'
 import axios from 'axios'
@@ -92,10 +92,10 @@ const AddProvince = (props) => {
             </CRow>
             <CModalFooter>
               <CButton color="secondary" onClick={() => setVisible(false)}>
-                Close
+                Cancel
               </CButton>
               <CButton color="primary" type="submit">
-                {loading ? 'Saving...' : 'Save changes'}
+                {loading ? 'Saving...' : 'Confirm'}
               </CButton>
             </CModalFooter>
           </CForm>

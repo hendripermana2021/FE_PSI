@@ -3,7 +3,7 @@ import { useNavigate, Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
 import Swal from 'sweetalert2'
 import axios from 'axios'
-import { serverSourceDev } from '../views/constantaEnv'
+import { serverSourceDev } from '../constant/constantaEnv'
 
 // Lazy load components
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'))

@@ -17,8 +17,8 @@ import {
 } from '@coreui/react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { serverSourceDev } from '../../constantaEnv'
 import propTypes from 'prop-types'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 
 const AddAjuanForm = (props) => {
   const { refreshTable, program } = props // Only refreshTable since we're creating a new role
@@ -248,7 +248,7 @@ const AddAjuanForm = (props) => {
           setCommented('')
           setUserId('')
           setVisible(false)
-          refreshTable(program)
+          refreshTable()
           setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
         })
       }
@@ -399,10 +399,10 @@ const AddAjuanForm = (props) => {
             </CRow>
             <CModalFooter>
               <CButton color="secondary" onClick={() => setVisible(false)}>
-                Close
+                Cancel
               </CButton>
               <CButton color="primary" type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Submit'}
+                {loading ? 'Saving...' : 'Confirm'}
               </CButton>
             </CModalFooter>
           </CForm>

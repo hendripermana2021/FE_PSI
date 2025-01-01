@@ -21,7 +21,7 @@ import {
 import propTypes from 'prop-types'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 
 const CreateKriteria = (props) => {
   const { refreshTable } = props
@@ -191,10 +191,10 @@ const CreateKriteria = (props) => {
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisible(false)} disabled={loading}>
-            Close
+            Cancel
           </CButton>
           <CButton color="primary" type="submit" onClick={handleCreate} disabled={loading}>
-            {loading ? 'Creating...' : 'Create Kriteria'}
+            {loading ? 'Creating...' : 'Confirm'}
           </CButton>
         </CModalFooter>
       </CModal>

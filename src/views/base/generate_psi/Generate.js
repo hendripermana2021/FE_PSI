@@ -3,7 +3,7 @@ import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
 import { DocsExample } from 'src/components'
 
 import ReactImg from 'src/assets/images/react.jpg'
-import { constantaSource } from '../../constantaEnv'
+import { constantaSource } from '../../../constant/constantaEnv'
 import TableGenerate from './Table-generate'
 
 const Generate = () => {

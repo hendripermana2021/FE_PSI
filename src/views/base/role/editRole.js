@@ -14,9 +14,9 @@ import {
 import propTypes from 'prop-types'
 import Swal from 'sweetalert2'
 import axios from 'axios'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 import { useNavigate } from 'react-router-dom' // Assuming you are using react-router-dom
-import { formatRupiah } from '../../functionGlobal'
+import { formatRupiah } from '../../../constant/functionGlobal'
 
 const EditRoles = (props) => {
   const { refreshTable, role } = props // Only refreshTable since we're creating a new role
@@ -101,10 +101,10 @@ const EditRoles = (props) => {
             </CRow>
             <CModalFooter>
               <CButton color="secondary" onClick={() => setVisible(false)}>
-                Close
+                Cancel
               </CButton>
               <CButton color="primary" type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Save Role'} {/* Updated button text */}
+                {loading ? 'Saving...' : 'Save changes'} {/* Updated button text */}
               </CButton>
             </CModalFooter>
           </CForm>

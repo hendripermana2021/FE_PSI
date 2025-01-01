@@ -16,7 +16,7 @@ import {
 } from '@coreui/react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 import propTypes from 'prop-types'
 
 const EditAjuan = (props) => {
@@ -249,9 +249,6 @@ const EditAjuan = (props) => {
               <CCol md={12} className="mb-3">
                 <h6>Select Province</h6>
                 <CFormSelect value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
-                  <option hidden value={provinceId}>
-                    {nameProvince}
-                  </option>
                   {provincesList.map((prov) => (
                     <option key={prov.id} value={prov.id}>
                       {prov.name_province}
@@ -267,9 +264,6 @@ const EditAjuan = (props) => {
                   disabled={!provinceId}
                   onChange={(e) => setRegionId(e.target.value)}
                 >
-                  <option value={regionId} hidden>
-                    {nameRegion}
-                  </option>
                   {regionList.map((reg) => (
                     <option key={reg.id} value={reg.id}>
                       {reg.name_region}
@@ -281,7 +275,7 @@ const EditAjuan = (props) => {
               <CCol md={12} className="mb-3">
                 <h6>Select User</h6>
                 <CFormSelect value={userId} onChange={(e) => setUserId(e.target.value)}>
-                  <option value={userId}>{username}</option>
+                  <option value="">--Pilih--</option>
                   {usersList.map((user) => (
                     <option key={user.id} value={user.id}>
                       {user.name}
@@ -292,14 +286,18 @@ const EditAjuan = (props) => {
 
               {kriteriaList.map((kriteria, index) => (
                 <CCol md={6} key={kriteria.id} className="mb-3">
-                  <h6>{kriteria.kriteria.name_kriteria}</h6>
+                  <h6>
+                    {kriteria.kriteria?.name_kriteria !== null
+                      ? kriteria.kriteria?.name_kriteria
+                      : ''}
+                  </h6>
                   <CFormSelect
                     name="id_subKriteria"
                     value={kriteriaSelections[index]?.id_subKriteria}
                     onChange={(e) => handleKriteriaChange(e, index, 'subKriteria')}
                   >
                     <option value={subKriteriaId} selected hidden>
-                      {kriteria.subkriteria.name_sub}
+                      {kriteria.subkriteria?.name_sub}
                     </option>
                     {kriteriaListData[index]?.sub_kriteria.map((sub) => (
                       <option key={sub.id} value={sub.id}>
@@ -322,7 +320,7 @@ const EditAjuan = (props) => {
             <CRow className="mt-3">
               <CCol className="text-end">
                 <CButton type="submit" color="primary" disabled={loading}>
-                  {loading ? 'Saving...' : 'Save'}
+                  {loading ? 'Saving...' : 'Save changes'}
                 </CButton>
               </CCol>
             </CRow>

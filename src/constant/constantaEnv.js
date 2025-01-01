@@ -3,4 +3,4 @@ export const constantaSource = {
   PageHeader: '(Create, Update, Delete and Edit Data)',
 }
 
-export const serverSourceDev = 'http://localhost:8000/v1/api/'
+export const serverSourceDev = 'http://localhost:8080/v1/api/'

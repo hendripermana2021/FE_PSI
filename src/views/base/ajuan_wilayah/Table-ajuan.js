@@ -18,16 +18,18 @@ import 'datatables.net-dt/js/dataTables.dataTables'
 import $ from 'jquery'
 import 'jquery/dist/jquery.min.js'
 import axios from 'axios'
-import { constantaSource, serverSourceDev } from '../../constantaEnv'
+import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
 import AddAjuanForm from './addAjuan'
 import EditAjuan from './editAjuan'
 import Swal from 'sweetalert2'
 import DetailAjuan from './detailAjuan'
+import { getDateTimeString } from '../../../constant/functionGlobal'
 
 const TableAjuan = () => {
   const [program, setProgram] = useState('') // Default to empty string
   const [programList, setProgramList] = useState([])
   const [ajuan, setAjuan] = useState([])
+  const [ajuanHistory, setAjuanHistory] = useState([])
   const [loading, setLoading] = useState(true)
 
   console.log('ajuan', ajuan)
@@ -42,6 +44,7 @@ const TableAjuan = () => {
   useEffect(() => {
     if (program) {
       getAjuan(program)
+      getAjuanGenerated(program)
     }
   }, [program])
 
@@ -79,7 +82,7 @@ const TableAjuan = () => {
           Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
         },
       })
-      setAjuan(response.data.data)
+      setAjuanHistory(response.data.data)
       console.log(ajuan)
     } catch (error) {
       if (error.response.status === 404) {
@@ -96,8 +99,18 @@ const TableAjuan = () => {
     }
   }
 
-  const formatRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(number)
+  const getAjuanGenerated = async (programId) => {
+    setLoading(true)
+    try {
+      const response = await axios.get(`${serverSourceDev}ajuan/program/generated/${programId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      })
+      setAjuan(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const deleteAjuan = async (data) => {
@@ -130,7 +143,7 @@ const TableAjuan = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <CCard className="mb-4">
+        <CCard className="mb-5">
           <CCardHeader>
             <CRow>
               <CCol md={7}>
@@ -212,11 +225,82 @@ const TableAjuan = () => {
                                 </CDropdownItem>
                                 <CDropdownItem>
                                   <CButton onClick={() => deleteAjuan(programs)}>
-                                    Delete Data
+                                    Delete Ajuan
                                   </CButton>
                                 </CDropdownItem>
                               </CDropdownMenu>
                             </CDropdown>
+                          </td>
+                        </tr>
+                      ) || '',
+                  )
+                )}
+              </tbody>
+            </table>
+          </CCardBody>
+        </CCard>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <CRow>
+              <CCol md={7}>
+                <strong>Table Ajuan History</strong>{' '}
+                <small>{String(constantaSource.tableHeader)}</small>
+              </CCol>
+              <CCol md={5} className="text-end"></CCol>
+            </CRow>
+          </CCardHeader>
+          <CCardBody>
+            <CRow className="mt-4 mb-3">
+              <CCol md={6}></CCol>
+              <CCol md={6} className="text-end"></CCol>
+            </CRow>
+            <table className="table table-hover" id="tableAjuan">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name Petugas</th>
+                  <th>Province</th>
+                  <th>Region</th>
+                  <th>Commented</th>
+                  <th>Status</th>
+                  <th>Date Generated</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : ajuanHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No Ajuan History Available
+                    </td>
+                  </tr>
+                ) : (
+                  ajuanHistory.map(
+                    (programs, index) =>
+                      (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>{programs?.users.name || '-'}</td>
+                          <td>{programs?.province.name_province || '-'}</td>
+                          <td>{programs?.region.name_region || '-'}</td>
+                          <td>{programs?.commented || '-'}</td>
+                          <td>
+                            {' '}
+                            {programs?.req_status ? (
+                              <CBadge color="danger">Belum Disetujui</CBadge>
+                            ) : (
+                              <CBadge color="success">Disetujui</CBadge>
+                            )}{' '}
+                          </td>
+                          <td>{getDateTimeString(programs?.updatedAt, true) || '-'}</td>
+                          <td className="text-center">
+                            <DetailAjuan ajuan={programs} />
                           </td>
                         </tr>
                       ) || '',

@@ -23,7 +23,7 @@ import { DocsExample } from 'src/components'
 
 import ReactImg from 'src/assets/images/react.jpg'
 import TableProgram from './Table-program'
-import { constantaSource } from '../../constantaEnv'
+import { constantaSource } from '../../../constant/constantaEnv'
 
 const Program = () => {
   return (

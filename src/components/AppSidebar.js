@@ -26,7 +26,7 @@ import {
   cilDescription,
 } from '@coreui/icons'
 import axios from 'axios'
-import { serverSourceDev } from '../views/constantaEnv'
+import { serverSourceDev } from '../constant/constantaEnv'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
@@ -128,7 +128,7 @@ const AppSidebar = () => {
               },
               {
                 component: CNavItem,
-                name: 'Generate PSI',
+                name: 'Generate PSI & ROC',
                 to: '/base/generate_psi',
                 icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
               },

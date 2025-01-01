@@ -13,7 +13,7 @@ import {
   CFormSelect,
   CSpinner,
 } from '@coreui/react'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 import propTypes from 'prop-types'
 import Swal from 'sweetalert2'
 import axios from 'axios'
@@ -148,7 +148,7 @@ const EditRegional = ({ province: data, dataRegion: region, refreshTable }) => {
 
             <CModalFooter className="mt-4">
               <CButton color="secondary" onClick={() => setVisible(false)}>
-                Close
+                Cancel
               </CButton>
               <CButton color="primary" type="submit" disabled={loading}>
                 {loading ? <CSpinner size="sm" /> : 'Save Changes'}

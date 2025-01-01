@@ -17,7 +17,7 @@ import {
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 
 const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
   const [loading, setLoading] = useState(false)
@@ -181,10 +181,10 @@ const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
 
             <CModalFooter>
               <CButton color="secondary" onClick={() => setVisible(false)} disabled={loading}>
-                Close
+                Cancel
               </CButton>
               <CButton color="primary" type="submit" disabled={loading}>
-                {loading ? 'Adding...' : 'Add Sub Kriteria'}
+                {loading ? 'Adding...' : 'Confirm'}
               </CButton>
             </CModalFooter>
           </CModalBody>

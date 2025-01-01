@@ -21,14 +21,14 @@ import 'datatables.net-dt/js/dataTables.dataTables'
 import $ from 'jquery'
 
 import 'jquery/dist/jquery.min.js'
-import { constantaSource, serverSourceDev } from '../../constantaEnv'
+import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import EditPrograms from './editPrograms'
 import DetailPrograms from './detailPrograms'
 import AddPrograms from './addPrograms'
 import AddProgramKriteria from './addProgramKriteria'
-import { formatRupiah } from '../../functionGlobal'
+import { formatRupiah } from '../../../constant/functionGlobal'
 
 const TableProgram = () => {
   const [program, setProgram] = useState([])

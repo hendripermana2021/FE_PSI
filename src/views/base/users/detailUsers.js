@@ -13,7 +13,7 @@ import {
 } from '@coreui/react'
 import propTypes from 'prop-types'
 import axios from 'axios'
-import { serverSourceDev } from '../../constantaEnv'
+import { serverSourceDev } from '../../../constant/constantaEnv'
 
 const DetailUser = (props) => {
   const { user: data } = props
@@ -90,7 +90,7 @@ const DetailUser = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(true)}>View Details</CButton>
+      <CButton onClick={() => setVisible(true)}>Detail</CButton>
 
       <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>

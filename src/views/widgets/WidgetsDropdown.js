@@ -91,7 +91,7 @@ const WidgetsDropdown = (props) => {
                 scales: {
                   x: {
                     border: {
-                      display: false,
+                      display: true,
                     },
                     grid: {
                       display: false,
