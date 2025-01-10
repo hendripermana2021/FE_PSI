@@ -18,6 +18,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { serverSourceDev } from '../../../constant/constantaEnv'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
   const [loading, setLoading] = useState(false)
@@ -38,20 +39,16 @@ const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
     try {
       const response = await axios.get(`${serverSourceDev}kriteria-sub`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setKriteria(response.data.data || [])
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Program data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
     } finally {
       setLoading(false)
@@ -73,7 +70,7 @@ const AddSubKriteria = ({ kriteria: initialData, refreshTable }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         },
       )

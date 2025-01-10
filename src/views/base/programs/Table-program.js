@@ -28,7 +28,7 @@ import EditPrograms from './editPrograms'
 import DetailPrograms from './detailPrograms'
 import AddPrograms from './addPrograms'
 import AddProgramKriteria from './addProgramKriteria'
-import { formatRupiah, toProper } from '../../../constant/functionGlobal'
+import { formatRupiah, swalNotif, toProper } from '../../../constant/functionGlobal'
 
 const TableProgram = () => {
   const [program, setProgram] = useState([])
@@ -42,21 +42,16 @@ const TableProgram = () => {
     try {
       const response = await axios.get(`${serverSourceDev}program-kriteria`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProgram(response.data.data)
       setLoading(false)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Program data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
       setLoading(false)
     }
@@ -76,7 +71,7 @@ const TableProgram = () => {
         try {
           await axios.delete(`${serverSourceDev}program/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getProgram()
@@ -103,7 +98,7 @@ const TableProgram = () => {
         try {
           await axios.delete(`${serverSourceDev}program-kriteria/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           console.log('deleted ID :', data.id)

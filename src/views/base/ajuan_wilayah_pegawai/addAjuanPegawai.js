@@ -43,91 +43,10 @@ const AddAjuanForm = (props) => {
   const [usersList, setUserList] = useState([]) // For storing Users based on selected province and Region
 
   console.log('kriteria', kriteriaSelections)
-  console.log('sub_kriteria')
   // Fetch kriteria and program data on component mount
   useEffect(() => {
     getProgram()
   }, [])
-
-  // Fetch all provinces on component mount
-  useEffect(() => {
-    const getProvinces = async () => {
-      try {
-        const response = await axios.get(`${serverSourceDev}province-sub`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        })
-        setProvinces(response.data.data)
-      } catch (error) {
-        if (error.response.status === 404) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Data Tidak Ada',
-            text: 'Maaf Data tidak ditemukan atau belum dibuat',
-          })
-        } else {
-          swalNotif(error, 'Error fetching Provinces data', '')
-        }
-      }
-    }
-    getProvinces()
-  }, [])
-
-  // Fetch regions based on selected provinceId
-  useEffect(() => {
-    if (provinceId) {
-      const getRegions = async () => {
-        try {
-          const response = await axios.get(`${serverSourceDev}regional/byprovince/${provinceId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          })
-          setRegions(response.data.data) // Update regions based on province
-        } catch (error) {
-          if (error.response.status === 404) {
-            swalNotif('error', 'data not found', error.message)
-            Swal.fire({
-              icon: 'error',
-              title: 'Data Tidak Ada',
-              text: 'Maaf Data tidak ditemukan atau belum dibuat',
-            })
-          } else {
-            swalNotif('error', 'Error fetching Regions data')
-          }
-        }
-      }
-
-      getRegions()
-    }
-  }, [provinceId])
-
-  useEffect(() => {
-    if (regionId || provinceId) {
-      const getUsers = async () => {
-        try {
-          const response = await axios.get(
-            `${serverSourceDev}users/condition/query?regionId=${regionId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-              },
-            },
-          )
-          setUserList(response.data.data) // Update regions based on province
-        } catch (error) {
-          if (error.response.status === 404) {
-            swalNotif('error', error.response.data.msg, error.message)
-          }
-
-          swalNotif('error', error.response.data.msg, error.message)
-        }
-      }
-
-      getUsers()
-    }
-  }, [regionId || provinceId])
 
   useEffect(() => {
     if (programId) {
@@ -167,7 +86,6 @@ const AddAjuanForm = (props) => {
         },
       })
       setProgramList(response.data.data)
-      console.log('test aja')
     } catch (error) {
       if (error.response.status === 404) {
         swalNotif('error', error.response.data.msg, error.message)
@@ -269,7 +187,7 @@ const AddAjuanForm = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(true)} color="primary">
+      <CButton onClick={() => setVisible(true)} color="primary" variant="outline">
         Tambah Ajuan
       </CButton>
 
@@ -295,49 +213,6 @@ const AddAjuanForm = (props) => {
                   {programList.map((program) => (
                     <option key={program.id} value={program.id}>
                       {program.name_program}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-              <CCol md={12} className="mb-3">
-                <h6>Select Province</h6>
-                <CFormSelect value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
-                  <option value="">Select Province</option>
-                  {provinces.map((prov) => (
-                    <option key={prov.id} value={prov.id}>
-                      {prov.name_province}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-
-              <CCol md={12} className="mb-3">
-                <h6>Select Region</h6>
-                <CFormSelect
-                  value={regionId}
-                  onChange={(e) => setRegionId(e.target.value)}
-                  disabled={!provinceId}
-                >
-                  <option value="">Select Region</option>
-                  {regions.map((reg) => (
-                    <option key={reg.id} value={reg.id}>
-                      {reg.name_region}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-
-              <CCol md={12} className="mb-3">
-                <h6>Select Penanggung Jawab</h6>
-                <CFormSelect
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  disabled={!regionId}
-                >
-                  <option value="">Select Users</option>
-                  {usersList.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
                     </option>
                   ))}
                 </CFormSelect>

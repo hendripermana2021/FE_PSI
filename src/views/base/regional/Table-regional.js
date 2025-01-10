@@ -29,6 +29,7 @@ import Swal from 'sweetalert2'
 import EditProvince from './editProvince'
 import AddRegional from './addRegional'
 import AddProvince from './addProvince'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const TableRegional = () => {
   const [provinceSub, setProvinceSub] = useState([])
@@ -43,21 +44,17 @@ const TableRegional = () => {
     try {
       const response = await axios.get(`${serverSourceDev}province-sub`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProvinceSub(response.data.data)
       setLoading(false)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Region data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
       setLoading(false)
     }
@@ -79,7 +76,7 @@ const TableRegional = () => {
         try {
           await axios.delete(`${serverSourceDev}province/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getProvinceSub() // Refresh the table after deletion
@@ -106,7 +103,7 @@ const TableRegional = () => {
         try {
           await axios.delete(`${serverSourceDev}regional/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getProvinceSub() // Refresh the table after deletion
@@ -175,7 +172,7 @@ const TableRegional = () => {
                                             <tr key={index}>
                                               <td className="text-center">{index + 1}</td>
                                               <td className="text-center">
-                                                {region.name_region || 'N/A'}
+                                                {region.name_region || 'N/A'} {region.id}
                                               </td>
                                               <td className="text-center" key={index}>
                                                 {' '}

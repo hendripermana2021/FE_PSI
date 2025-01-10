@@ -24,16 +24,28 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [checkToken, setCheckToken] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
     // Check if token exists in local storage
-    const token = sessionStorage.getItem('accessToken')
-    if (token) {
-      // Redirect to dashboard page
+
+    getProfile()
+  }, [])
+
+  const getProfile = async () => {
+    try {
+      const response = await axios.get(`${serverSourceDev}me`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      })
+      setCheckToken(response.data.data)
       navigate('/dashboard')
+    } catch (error) {
+      console.error(error)
     }
-  }, [navigate])
+  }
 
   const emittedLogin = async (e) => {
     setIsSubmitting(true)
@@ -44,7 +56,7 @@ const Login = () => {
         password,
       })
       const token = post.data.data
-      sessionStorage.setItem('accessToken', token)
+      localStorage.setItem('accessToken', token)
       setIsSubmitting(false)
 
       console.log(token)

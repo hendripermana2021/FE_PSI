@@ -27,6 +27,8 @@ import {
 } from '@coreui/icons'
 import axios from 'axios'
 import { serverSourceDev } from '../constant/constantaEnv'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
@@ -34,6 +36,7 @@ const AppSidebar = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const [profile, setProfile] = useState({})
   const [token, setToken] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     getProfile()
@@ -43,13 +46,22 @@ const AppSidebar = () => {
     try {
       const response = await axios.get(`${serverSourceDev}me`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProfile(response.data.data)
-      setToken(sessionStorage.getItem('accessToken'))
+      setToken(localStorage.getItem('accessToken'))
     } catch (error) {
-      console.error(error)
+      if (error.response?.status === 403) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Tidak Memiliki hak akses',
+          text: 'Maaf harap login',
+        }).then(() => {
+          navigate('/login')
+        })
+      }
+      console.error('Ini Errornya ', error)
     }
   }
 
@@ -162,15 +174,15 @@ const AppSidebar = () => {
           },
           {
             component: CNavGroup,
-            name: 'Realisasi Anggaran',
+            name: 'Ajuan Programs',
             to: '/base',
-            icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
+            icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
             items: [
               {
                 component: CNavItem,
-                name: 'DPA & DPP',
-                to: '/master/ajuan',
-                icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+                name: 'Ajuan Wilayah',
+                to: '/base/ajuan',
+                icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
               },
             ],
           },

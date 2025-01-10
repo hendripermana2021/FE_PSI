@@ -18,6 +18,7 @@ import axios from 'axios'
 import { serverSourceDev } from '../../../constant/constantaEnv'
 import { useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa' // Eye icons for show/hide
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const CreateUsers = ({ refreshTable }) => {
   const [loading, setLoading] = useState(false)
@@ -51,20 +52,16 @@ const CreateUsers = ({ refreshTable }) => {
     try {
       const response = await axios.get(`${serverSourceDev}role`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setRoleList(response.data.data)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Role data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
     }
   }
@@ -75,20 +72,15 @@ const CreateUsers = ({ refreshTable }) => {
       try {
         const response = await axios.get(`${serverSourceDev}province-sub`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         })
         setProvinces(response.data.data)
       } catch (error) {
         if (error.response.status === 404) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Data Tidak Ada',
-            text: 'Maaf Data tidak ditemukan atau belum dibuat',
-          })
-        } else {
-          handleError(error, 'Error fetching Province data')
+          swalNotif('error', error.response.data.msg, error.message)
         }
+        swalNotif('error', error.response.data.msg, error.message)
         console.log(error, 'Error fetching data')
       }
     }
@@ -103,20 +95,15 @@ const CreateUsers = ({ refreshTable }) => {
         try {
           const response = await axios.get(`${serverSourceDev}regional/byprovince/${provinceId}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           setRegions(response.data.data) // Update regions based on province
         } catch (error) {
           if (error.response.status === 404) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Data Tidak Ada',
-              text: 'Maaf Data tidak ditemukan atau belum dibuat',
-            })
-          } else {
-            handleError(error, 'Error Region Program data')
+            swalNotif('error', error.response.data.msg, error.message)
           }
+          swalNotif('error', error.response.data.msg, error.message)
           console.log(error, 'Error fetching data')
         }
       }
@@ -149,7 +136,7 @@ const CreateUsers = ({ refreshTable }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         },
       )

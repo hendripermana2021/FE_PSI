@@ -16,6 +16,7 @@ import { serverSourceDev } from '../../../constant/constantaEnv'
 import propTypes from 'prop-types'
 import Swal from 'sweetalert2'
 import axios from 'axios'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const AddRegional = (props) => {
   const { refreshTable } = props
@@ -34,21 +35,17 @@ const AddRegional = (props) => {
     try {
       const response = await axios.get(`${serverSourceDev}province`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProvince(response.data.data)
       setLoading(false)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Province data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
       setLoading(false)
     }
@@ -67,7 +64,7 @@ const AddRegional = (props) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // Correctly formatting the Authorization header
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // Correctly formatting the Authorization header
           },
         },
       )

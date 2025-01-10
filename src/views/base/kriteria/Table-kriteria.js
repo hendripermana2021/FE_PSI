@@ -30,6 +30,7 @@ import EditSubKriteria from './editSubKriteria'
 import DetailKriteria from './detailKriteria'
 import EditKriteria from './editKriteria'
 import AddSubKriteria from './addSubKriteria'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const TableKriteria = () => {
   const [kriteria, setKriteria] = useState([])
@@ -43,7 +44,7 @@ const TableKriteria = () => {
     try {
       const response = await axios.get(`${serverSourceDev}kriteria-sub`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       console.log('data diterima', response.data.data)
@@ -51,14 +52,10 @@ const TableKriteria = () => {
       setLoading(false)
     } catch (error) {
       if (error.response.status === 400) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching kriteria data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
       console.error('Error fetching region data:', error)
       setLoading(false)
     }
@@ -78,7 +75,7 @@ const TableKriteria = () => {
         try {
           await axios.delete(`${serverSourceDev}kriteria-sub/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getKriteria() // Refresh the table after deletion
@@ -105,7 +102,7 @@ const TableKriteria = () => {
         try {
           await axios.delete(`${serverSourceDev}sub-kriteria/delete/${data}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getKriteria() // Refresh the table after deletion
@@ -176,7 +173,9 @@ const TableKriteria = () => {
                                     {kriterias.sub_kriteria.map((subKriteria, index) => (
                                       <tr key={index}>
                                         <td className="mb-3">{index + 1}</td>
-                                        <td>{subKriteria.name_sub || 'N/A'}</td>
+                                        <td>
+                                          {subKriteria.name_sub || 'N/A'} {subKriteria.id}
+                                        </td>
                                         <td>{subKriteria.value || 'N/A'}</td>
                                         <td className="text-center">
                                           <CTooltip

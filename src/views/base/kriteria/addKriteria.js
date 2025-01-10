@@ -51,7 +51,7 @@ const CreateKriteria = (props) => {
     try {
       const response = await axios.post(`${serverSourceDev}kriteria-sub/create`, payload, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
 

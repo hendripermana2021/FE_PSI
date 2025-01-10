@@ -22,6 +22,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa' // Eye icons for show/hide
 import EditUser from './editUsers'
 import DetailUser from './detailUsers'
 import CreateUsers from './addUsers'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const TableUsers = () => {
   const [users, setUsers] = useState([])
@@ -48,22 +49,17 @@ const TableUsers = () => {
     try {
       const response = await axios.get(`${serverSourceDev}users`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setUsers(response.data.data)
       setLoading(false)
-      console.log(sessionStorage.getItem('accessToken'))
+      console.log(localStorage.getItem('accessToken'))
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Users data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
       setLoading(false)
     }
@@ -73,20 +69,15 @@ const TableUsers = () => {
     try {
       const response = await axios.get(`${serverSourceDev}role`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setRole(response.data.data)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Role data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
     }
   }
@@ -105,7 +96,7 @@ const TableUsers = () => {
         try {
           await axios.delete(`${serverSourceDev}users/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getUsers()
@@ -168,7 +159,9 @@ const TableUsers = () => {
                     : users.map((user, index) => (
                         <tr key={index}>
                           <td className="text-center">{index + 1}</td>
-                          <td>{user?.name || 'N/A'}</td>
+                          <td>
+                            {user?.name || 'N/A'} {user.id}
+                          </td>
                           <td>{user?.sex || 'N/A'}</td>
                           <td>{user?.email || 'N/A'}</td>
                           <td>{user?.province?.name_province || 'N/A'}</td>

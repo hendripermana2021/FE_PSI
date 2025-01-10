@@ -31,11 +31,10 @@ const AppHeaderDropdown = () => {
     try {
       const response = await axios.get(`${serverSourceDev}me`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProfile(response.data.data)
-      setToken(sessionStorage.getItem('accessToken'))
     } catch (error) {
       console.error(error)
     }
@@ -55,11 +54,11 @@ const AppHeaderDropdown = () => {
         try {
           await axios.delete(`${serverSourceDev}logout`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
 
-          sessionStorage.removeItem('accessToken')
+          localStorage.removeItem('accessToken')
 
           Swal.fire('Logout!', 'Your has been logout', 'success').then(() => {
             navigate('/login')

@@ -24,7 +24,7 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 // import { toDecimal } from '../../../constant/functionGlobal'
 import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
-import { toDecimal } from '../../../constant/functionGlobal'
+import { swalNotif, toDecimal } from '../../../constant/functionGlobal'
 
 const TableGenerate = () => {
   const [program, setProgram] = useState('') // Default to empty string
@@ -57,20 +57,16 @@ const TableGenerate = () => {
     try {
       const response = await axios.get(`${serverSourceDev}program-kriteria`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setProgramList(response.data.data)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Program data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
     } finally {
       setLoading(false)
     }
@@ -81,21 +77,17 @@ const TableGenerate = () => {
     try {
       const response = await axios.get(`${serverSourceDev}ajuan/program/generated/${programId}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setAjuan(response.data.data)
       console.log('TEST', ajuan)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Program data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+
+      swalNotif('error', error.response.data.msg, error.message)
     } finally {
       setLoading(false)
     }
@@ -123,7 +115,7 @@ const TableGenerate = () => {
         try {
           const response = await axios.get(`${serverSourceDev}action/calculatedPSI/${data}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           setRumus(response.data.data)
@@ -157,7 +149,7 @@ const TableGenerate = () => {
         try {
           const response = await axios.get(`${serverSourceDev}action/calculatedROC/${data}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           setRoc(response.data.data)
@@ -678,11 +670,11 @@ const TableGenerate = () => {
                                     {ajuans.map((values, index) => (
                                       <td key={index} style={{ fontSize: '12px' }}>
                                         {typeof values === 'number'
-                                          ? new Intl.NumberFormat('en-US', {
+                                          ? values
+                                          : new Intl.NumberFormat('en-US', {
                                               minimumFractionDigits: 2,
                                               maximumFractionDigits: 2,
-                                            }).format(values)
-                                          : values}
+                                            }).format(values)}
                                       </td>
                                     ))}
                                   </tr>

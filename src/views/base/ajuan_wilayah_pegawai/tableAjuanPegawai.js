@@ -19,17 +19,16 @@ import $ from 'jquery'
 import 'jquery/dist/jquery.min.js'
 import axios from 'axios'
 import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
-import AddAjuanForm from './addAjuan'
-import EditAjuan from './editAjuan'
+import AddAjuanForm from './addAjuanPegawai'
+import EditAjuan from './editAjuanPegawai'
 import Swal from 'sweetalert2'
-import DetailAjuan from './detailAjuan'
+import DetailAjuan from './detailAjuanPegawai'
 import { getDateTimeString, swalNotif } from '../../../constant/functionGlobal'
 
-const TableAjuan = () => {
+const TableAjuanPegawai = () => {
   const [program, setProgram] = useState('') // Default to empty string
   const [programList, setProgramList] = useState([])
   const [ajuan, setAjuan] = useState([])
-  const [ajuanHistory, setAjuanHistory] = useState([])
   const [loading, setLoading] = useState(true)
 
   console.log('ajuan', ajuan)
@@ -39,14 +38,6 @@ const TableAjuan = () => {
     getProgram()
     getAjuan()
   }, [])
-
-  // Re-fetch Ajuan data when the selected program changes
-  useEffect(() => {
-    if (program) {
-      getAjuan(program)
-      getAjuanGenerated(program)
-    }
-  }, [program])
 
   // Initialize or destroy DataTable when ajuan data is updated
   useEffect(() => {}, [ajuan, loading])
@@ -70,16 +61,16 @@ const TableAjuan = () => {
     }
   }
 
-  const getAjuan = async (programId) => {
+  const getAjuan = async () => {
     setLoading(true)
     try {
-      const response = await axios.get(`${serverSourceDev}ajuan/program/${programId}`, {
+      const response = await axios.get(`${serverSourceDev}ajuan-pegawai`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
-      setAjuanHistory(response.data.data)
-      console.log(ajuan)
+      setAjuan(response.data.data)
+      console.log('getAjuanPegawai', response.data.data)
     } catch (error) {
       if (error.response.status === 404) {
         swalNotif('error', error.response.data.msg, error.message)
@@ -88,20 +79,6 @@ const TableAjuan = () => {
       swalNotif('error', error.response.data.msg, error.message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const getAjuanGenerated = async (programId) => {
-    setLoading(true)
-    try {
-      const response = await axios.get(`${serverSourceDev}ajuan/program/generated/${programId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      })
-      setAjuan(response.data.data)
-    } catch (error) {
-      console.log(error)
     }
   }
 
@@ -147,27 +124,11 @@ const TableAjuan = () => {
             </CRow>
           </CCardHeader>
           <CCardBody>
-            <CRow className="mt-4 mb-3">
-              <CCol md={6}></CCol>
-              <CCol md={6} className="text-end">
-                <h6>Select Program</h6>
-                <CFormSelect value={program} onChange={(e) => setProgram(e.target.value)}>
-                  <option value="99">Select Program</option>
-                  {programList.map((prog) => (
-                    <option key={prog.id} value={prog.id}>
-                      {prog.name_program}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-            </CRow>
             <table className="table table-hover" id="tableAjuan">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name Petugas</th>
-                  <th>Province</th>
-                  <th>Region</th>
+                  <th>Program</th>
                   <th>Commented</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -179,103 +140,38 @@ const TableAjuan = () => {
                   : ajuan.length === 0
                     ? ''
                     : ajuan.map(
-                        (programs, index) =>
+                        (data, index) =>
                           (
                             <tr key={index}>
                               <td className="text-center">{index + 1}</td>
-                              <td>{programs?.users.name || '-'}</td>
-                              <td>{programs?.province.name_province || '-'}</td>
-                              <td>{programs?.region.name_region || '-'}</td>
-                              <td>{programs?.commented || '-'}</td>
+                              <td>{data?.program?.name_program || '-'}</td>
+                              <td>{data?.commented || '-'}</td>
                               <td>
                                 {' '}
-                                {programs?.req_status ? (
+                                {data?.req_status ? (
                                   <CBadge color="danger">Belum Disetujui</CBadge>
                                 ) : (
                                   <CBadge color="success">Disetujui</CBadge>
                                 )}{' '}
                               </td>
                               <td className="text-center">
-                                <CDropdown variant="btn-group" key={index}>
+                                {/* <CDropdown variant="btn-group" key={index}>
                                   <CButton color="primary">Action</CButton>
                                   <CDropdownToggle color="primary" split />
                                   <CDropdownMenu>
                                     <CDropdownItem>
-                                      <EditAjuan ajuan={programs} refreshTable={getAjuan} />
+                                      <EditAjuan ajuan={data} refreshTable={getAjuan} />
                                     </CDropdownItem>
                                     <CDropdownItem>
-                                      <DetailAjuan ajuan={programs} />
+                                      <DetailAjuan ajuan={data} />
                                     </CDropdownItem>
                                     <CDropdownItem>
-                                      <CButton onClick={() => deleteAjuan(programs)}>
+                                      <CButton onClick={() => deleteAjuan(data)}>
                                         Delete Ajuan
                                       </CButton>
                                     </CDropdownItem>
                                   </CDropdownMenu>
-                                </CDropdown>
-                              </td>
-                            </tr>
-                          ) || '',
-                      )}
-              </tbody>
-            </table>
-          </CCardBody>
-        </CCard>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <CRow>
-              <CCol md={7}>
-                <strong>Table Ajuan History</strong>{' '}
-                <small>{String(constantaSource.tableHeader)}</small>
-              </CCol>
-              <CCol md={5} className="text-end"></CCol>
-            </CRow>
-          </CCardHeader>
-          <CCardBody>
-            <CRow className="mt-4 mb-3">
-              <CCol md={6}></CCol>
-              <CCol md={6} className="text-end"></CCol>
-            </CRow>
-            <table className="table table-hover" id="tableAjuan">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name Petugas</th>
-                  <th>Province</th>
-                  <th>Region</th>
-                  <th>Commented</th>
-                  <th>Status</th>
-                  <th>Date Generated</th>
-                  <th>Rank</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading
-                  ? ''
-                  : ajuanHistory.length === 0
-                    ? ''
-                    : ajuanHistory.map(
-                        (programs, index) =>
-                          (
-                            <tr key={index}>
-                              <td className="text-center">{index + 1}</td>
-                              <td>{programs?.users.name || '-'}</td>
-                              <td>{programs?.province.name_province || '-'}</td>
-                              <td>{programs?.region.name_region || '-'}</td>
-                              <td>{programs?.commented || '-'}</td>
-                              <td>
-                                {' '}
-                                {programs?.req_status ? (
-                                  <CBadge color="danger">Belum Disetujui</CBadge>
-                                ) : (
-                                  <CBadge color="success">Disetujui</CBadge>
-                                )}{' '}
-                              </td>
-                              <td>{getDateTimeString(programs?.updatedAt, true) || '-'}</td>
-                              <td>{programs?.rank || '-'}</td>
-                              <td className="text-center">
-                                <DetailAjuan ajuan={programs} />
+                                </CDropdown> */}
                               </td>
                             </tr>
                           ) || '',
@@ -289,4 +185,4 @@ const TableAjuan = () => {
   )
 }
 
-export default TableAjuan
+export default TableAjuanPegawai

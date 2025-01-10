@@ -27,12 +27,15 @@ import axios from 'axios'
 // import { serverSourceDev } from '../constantaEnv'
 import Swal from 'sweetalert2' // Ensure Swal is imported
 import { serverSourceDev } from '../../constant/constantaEnv'
-import { formatRupiah } from '../../constant/functionGlobal'
+import { formatRupiah, swalNotif } from '../../constant/functionGlobal'
+import { useNavigate } from 'react-router-dom'
+import TableProgramAjuanPegawai from '../base/program_pegawai/tableProgramPegawai'
 // import { formatRupiah } from '../functionGlobal'
 
 const Dashboard = () => {
   const [dataDashboard, setDataDashboard] = useState(null) // Start with null to safely check currentUser
   const [loading, setLoading] = useState(true) // Initialize loading state
+  const navigate = useNavigate() // Assuming you are using react-router-dom
 
   useEffect(() => {
     getDataDashboard() // Fetch dashboard data when the component mounts
@@ -42,21 +45,17 @@ const Dashboard = () => {
     try {
       const response = await axios.get(`${serverSourceDev}dashboard`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setDataDashboard(response.data.data) // Assuming 'data' is the property you need
-      console.log(response.data.data)
+      console.log('Data Dashboard', response.data.data)
     } catch (error) {
       if (error.response?.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Program data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
+      console.log(error)
     } finally {
       setLoading(false) // Stop loading when the request finishes
     }
@@ -185,6 +184,84 @@ const Dashboard = () => {
               <CCardHeader>Daftar Ajuan</CCardHeader>
               <CCardBody>
                 <TableAjuan />
+              </CCardBody>
+            </CCard>
+          </CRow>
+        </>
+      ) : dataDashboard?.currentUser?.role_id === 2 ? (
+        <>
+          <CRow>
+            <CCol xs={8} md={8}>
+              <CWidgetStatsD
+                className="mb-3"
+                icon={<CIcon className="my-4 text-white" icon={cibAbstract} height={52} />}
+                chart={
+                  <CChartLine
+                    className="position-absolute w-100 h-100"
+                    data={{
+                      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                      datasets: [
+                        {
+                          backgroundColor: 'rgba(255,255,255,.1)',
+                          borderColor: 'rgba(255,255,255,.55)',
+                          pointHoverBackgroundColor: '#fff',
+                          borderWidth: 2,
+                          data: [65, 59, 84, 84, 51, 55, 40],
+                          fill: true,
+                        },
+                      ],
+                    }}
+                    options={{
+                      elements: {
+                        line: {
+                          tension: 0.4,
+                        },
+                        point: {
+                          radius: 0,
+                          hitRadius: 10,
+                          hoverRadius: 4,
+                          hoverBorderWidth: 3,
+                        },
+                      },
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                      },
+                      scales: {
+                        x: {
+                          display: false,
+                        },
+                        y: {
+                          display: false,
+                        },
+                      },
+                    }}
+                  />
+                }
+                style={{ '--cui-card-cap-bg': '#3b5998' }}
+                values={[
+                  { title: 'Ajuan Approve', value: `${dataDashboard.total_program_approved}` },
+                  { title: 'Ajuan Aktif', value: `${dataDashboard.total_program_active}` },
+                  { title: 'Program Aktif', value: `${dataDashboard.total_program}` },
+                ]}
+              />
+            </CCol>
+            <CCol xs={4} md={4}>
+              <CWidgetStatsB
+                className="mb-3"
+                text="Total Dana diterima yang selanjutnya digunakan untuk kepentingan program yang akan dilangsungkan selanjutnya."
+                title="Dana Program Diterima"
+                value={formatRupiah(dataDashboard.total_dana)}
+              />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCard>
+              <CCardHeader>Total Program Diajukan/Diterima/Ditolak</CCardHeader>
+              <CCardBody>
+                <TableProgramAjuanPegawai data={dataDashboard} />
               </CCardBody>
             </CCard>
           </CRow>

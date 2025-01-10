@@ -21,6 +21,7 @@ import axios from 'axios'
 import EditRoles from './editRole'
 import DetailRoles from './detailRole'
 import AddRoles from './addRole'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const TableRole = () => {
   const [role, setRole] = useState([])
@@ -51,22 +52,17 @@ const TableRole = () => {
     try {
       const response = await axios.get(`${serverSourceDev}role`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setRole(response.data.data)
       setLoading(false)
-      console.log(sessionStorage.getItem('accessToken'))
+      console.log(localStorage.getItem('accessToken'))
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Role data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
       setLoading(false)
     }
@@ -86,7 +82,7 @@ const TableRole = () => {
         try {
           await axios.delete(`${serverSourceDev}role/delete/${data.id}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           getRole()

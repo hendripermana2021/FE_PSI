@@ -17,11 +17,11 @@ export function toDecimal(value) {
     : value
 }
 
-export function swalError(title, message) {
+export function swalNotif(icon, title, message) {
   return Swal.fire({
     title: `${title}`,
     text: `${message || 'An unexpected error occurred'}`,
-    icon: 'warning',
+    icon: `${icon}`,
     willOpen: () => {
       // Apply inline CSS to set z-index for SweetAlert modal
       const swalContainer = document.querySelector('.swal2-container')

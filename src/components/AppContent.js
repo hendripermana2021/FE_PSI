@@ -7,13 +7,13 @@ import { serverSourceDev } from '../constant/constantaEnv'
 
 // Lazy load components
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'))
-const DashboardPegawai = React.lazy(() => import('../views/dashboard/DashboardPegawai'))
 const Users = React.lazy(() => import('../views/base/users/Users'))
 const Programs = React.lazy(() => import('../views/base/programs/Programs'))
 const Role = React.lazy(() => import('../views/base/role/Role'))
 const Regional = React.lazy(() => import('../views/base/regional/Regional'))
 const Kriteria = React.lazy(() => import('../views/base/kriteria/Kriteria'))
 const Ajuan = React.lazy(() => import('../views/base/ajuan_wilayah/Ajuan'))
+const AjuanPegawai = React.lazy(() => import('../views/base/ajuan_wilayah_pegawai/ajuanPegawai'))
 const Generate = React.lazy(() => import('../views/base/generate_psi/Generate'))
 
 const AppContent = () => {
@@ -23,7 +23,7 @@ const AppContent = () => {
 
   useEffect(() => {
     // Check if token exists in session storage
-    const storedToken = sessionStorage.getItem('accessToken')
+    const storedToken = localStorage.getItem('accessToken')
     setToken(storedToken)
 
     if (!storedToken) {
@@ -73,8 +73,8 @@ const AppContent = () => {
         ]
       : [
           { path: '/', exact: true, name: 'Home' },
-          { path: '/base/ajuan', name: 'Ajuan', element: Ajuan },
-          { path: '/dashboard', name: 'Dashboard', element: DashboardPegawai },
+          { path: '/base/ajuan', name: 'Ajuan', element: AjuanPegawai },
+          { path: '/dashboard', name: 'Dashboard', element: Dashboard },
         ]
 
   return (

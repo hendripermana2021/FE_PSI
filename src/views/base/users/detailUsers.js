@@ -14,6 +14,7 @@ import {
 import propTypes from 'prop-types'
 import axios from 'axios'
 import { serverSourceDev } from '../../../constant/constantaEnv'
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const DetailUser = (props) => {
   const { user: data } = props
@@ -33,7 +34,7 @@ const DetailUser = (props) => {
       try {
         const response = await axios.get(`${serverSourceDev}province-sub`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         })
         setProvinces(response.data.data)
@@ -41,14 +42,9 @@ const DetailUser = (props) => {
         setProvince(selectedProvince?.name_province || '')
       } catch (error) {
         if (error.response.status === 404) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Data Tidak Ada',
-            text: 'Maaf Data tidak ditemukan atau belum dibuat',
-          })
-        } else {
-          handleError(error, 'Error fetching Province data')
+          swalNotif('error', error.response.data.msg, error.message)
         }
+        swalNotif('error', error.response.data.msg, error.message)
         console.log(error, 'Error fetching data')
       }
     }
@@ -64,7 +60,7 @@ const DetailUser = (props) => {
             `${serverSourceDev}regional/byprovince/${data.province?.id}`,
             {
               headers: {
-                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
               },
             },
           )
@@ -73,14 +69,9 @@ const DetailUser = (props) => {
           setRegion(selectedRegion?.name_region || '')
         } catch (error) {
           if (error.response.status === 404) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Data Tidak Ada',
-              text: 'Maaf Data tidak ditemukan atau belum dibuat',
-            })
-          } else {
-            handleError(error, 'Error fetching Regions data')
+            swalNotif('error', error.response.data.msg, error.message)
           }
+          swalNotif('error', error.response.data.msg, error.message)
           console.log(error, 'Error fetching data')
         }
       }

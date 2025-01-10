@@ -18,6 +18,7 @@ import axios from 'axios'
 import { serverSourceDev } from '../../../constant/constantaEnv'
 import { useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa' // Eye icons for show/hide
+import { swalNotif } from '../../../constant/functionGlobal'
 
 const EditUser = (props) => {
   const { user: data, refreshTable } = props
@@ -43,20 +44,15 @@ const EditUser = (props) => {
     try {
       const response = await axios.get(`${serverSourceDev}role`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
       setRoleList(response.data.data)
     } catch (error) {
       if (error.response.status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Data Tidak Ada',
-          text: 'Maaf Data tidak ditemukan atau belum dibuat',
-        })
-      } else {
-        handleError(error, 'Error fetching Role data')
+        swalNotif('error', error.response.data.msg, error.message)
       }
+      swalNotif('error', error.response.data.msg, error.message)
       console.log(error, 'Error fetching data')
     }
   }
@@ -69,20 +65,16 @@ const EditUser = (props) => {
       try {
         const response = await axios.get(`${serverSourceDev}province-sub`, {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         })
         setProvinces(response.data.data)
       } catch (error) {
         if (error.response.status === 404) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Data Tidak Ada',
-            text: 'Maaf Data tidak ditemukan atau belum dibuat',
-          })
-        } else {
-          handleError(error, 'Error fetching Provinces data')
+          swalNotif('error', error.response.data.msg, error.message)
         }
+
+        swalNotif('error', error.response.data.msg, error.message)
         console.log(error, 'Error fetching data')
       }
     }
@@ -97,20 +89,15 @@ const EditUser = (props) => {
         try {
           const response = await axios.get(`${serverSourceDev}regional/byprovince/${provinceId}`, {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           })
           setRegions(response.data.data) // Update regions based on province
         } catch (error) {
           if (error.response.status === 404) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Data Tidak Ada',
-              text: 'Maaf Data tidak ditemukan atau belum dibuat',
-            })
-          } else {
-            handleError(error, 'Error fetching Region data')
+            swalNotif('error', error.response.data.msg, error.message)
           }
+          swalNotif('error', error.response.data.msg, error.message)
           console.log(error, 'Error fetching data')
         }
       }
@@ -129,24 +116,24 @@ const EditUser = (props) => {
       return Swal.fire({ icon: 'error', title: 'All fields must be filled' })
     }
 
+    const dataForm = {
+      name: name,
+      sex: sex,
+      email: email,
+      password: password,
+      role_id: role,
+      region_id: regionId,
+      province_id: provinceId,
+    }
+
+    console.log('Data FOrm', dataForm)
+
     try {
-      const response = await axios.put(
-        `${serverSourceDev}users/update/${data.id}`,
-        {
-          name: name,
-          sex: sex,
-          email: email,
-          password: password,
-          role_id: role,
-          region_id: regionId,
-          province_id: provinceId,
+      const response = await axios.put(`${serverSourceDev}users/update/${data.id}`, dataForm, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
-          },
-        },
-      )
+      })
 
       if (response.status === 200) {
         Swal.fire({ icon: 'success', title: 'User updated successfully' }).then(() => {
@@ -246,9 +233,6 @@ const EditUser = (props) => {
               <CCol md={12} className="mb-3">
                 <h6>Select Role</h6>
                 <CFormSelect value={role} onChange={(e) => setRole(e.target.value)}>
-                  <option value="" hidden>
-                    {role ? `Selected: ${role}` : 'Select Role'}
-                  </option>
                   {roleList.map((role) => (
                     <option key={role.id} value={role.id}>
                       {role.role_name}
