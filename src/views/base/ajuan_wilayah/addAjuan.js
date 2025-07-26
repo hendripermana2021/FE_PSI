@@ -22,7 +22,7 @@ import { serverSourceDev } from '../../../constant/constantaEnv'
 import { swalNotif } from '../../../constant/functionGlobal'
 
 const AddAjuanForm = (props) => {
-  const { refreshTable, program } = props // Only refreshTable since we're creating a new role
+  const { refreshTable, program, visibility } = props // Only refreshTable since we're creating a new role
   const [loading, setLoading] = useState(false)
   const [programId, setProgramId] = useState('')
   const [commented, setCommented] = useState('')
@@ -35,6 +35,7 @@ const AddAjuanForm = (props) => {
       id_subKriteria: '',
     },
   ])
+  console.log("THis from table ==> ", visibility)
   const [visible, setVisible] = useState(false)
   const [provinceId, setProvinceId] = useState('')
   const [regionId, setRegionId] = useState('')
@@ -104,7 +105,7 @@ const AddAjuanForm = (props) => {
   }, [provinceId])
 
   useEffect(() => {
-    if (regionId || provinceId) {
+    if (regionId) {
       const getUsers = async () => {
         try {
           const response = await axios.get(
@@ -117,6 +118,7 @@ const AddAjuanForm = (props) => {
           )
           setUserList(response.data.data) // Update regions based on province
         } catch (error) {
+          console.log("ERROR DISINI ==> ", error)
           if (error.response.status === 404) {
             swalNotif('error', error.response.data.msg, error.message)
           }
@@ -127,7 +129,7 @@ const AddAjuanForm = (props) => {
 
       getUsers()
     }
-  }, [regionId || provinceId])
+  }, [regionId])
 
   useEffect(() => {
     if (programId) {
@@ -269,7 +271,7 @@ const AddAjuanForm = (props) => {
 
   return (
     <>
-      <CButton onClick={() => setVisible(true)} color="primary">
+      <CButton onClick={() => setVisible(true)} color="primary" disabled={visibility} >
         Tambah Ajuan
       </CButton>
 
@@ -405,6 +407,7 @@ const AddAjuanForm = (props) => {
 AddAjuanForm.propTypes = {
   refreshTable: propTypes.func.isRequired,
   program: propTypes.number.isRequired,
+  visibility: propTypes.bool.isRequired,
 }
 
 export default AddAjuanForm

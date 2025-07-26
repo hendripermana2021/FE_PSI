@@ -23,7 +23,7 @@ import AddAjuanForm from './addAjuanPegawai'
 import EditAjuan from './editAjuanPegawai'
 import Swal from 'sweetalert2'
 import DetailAjuan from './detailAjuanPegawai'
-import { getDateTimeString, swalNotif } from '../../../constant/functionGlobal'
+import { formatRupiah, getDateTimeString, swalNotif } from '../../../constant/functionGlobal'
 
 const TableAjuanPegawai = () => {
   const [program, setProgram] = useState('') // Default to empty string
@@ -130,6 +130,7 @@ const TableAjuanPegawai = () => {
                   <th>ID</th>
                   <th>Program</th>
                   <th>Commented</th>
+                  <th>Jlh Dana Diterima</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -146,6 +147,7 @@ const TableAjuanPegawai = () => {
                               <td className="text-center">{index + 1}</td>
                               <td>{data?.program?.name_program || '-'}</td>
                               <td>{data?.commented || '-'}</td>
+                              <td>{formatRupiah(data?.jlh_dana) || '-'}</td>
                               <td>
                                 {' '}
                                 {data?.req_status ? (

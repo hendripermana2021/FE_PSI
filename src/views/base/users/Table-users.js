@@ -160,7 +160,7 @@ const TableUsers = () => {
                         <tr key={index}>
                           <td className="text-center">{index + 1}</td>
                           <td>
-                            {user?.name || 'N/A'} {user.id}
+                            {user?.name || 'N/A'}
                           </td>
                           <td>{user?.sex || 'N/A'}</td>
                           <td>{user?.email || 'N/A'}</td>

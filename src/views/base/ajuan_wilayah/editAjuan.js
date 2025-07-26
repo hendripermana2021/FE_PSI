@@ -228,7 +228,7 @@ const EditAjuan = (props) => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <h6>Select Program</h6>
-                <CFormSelect value={programId} onChange={(e) => setProgramId(e.target.value)}>
+                <CFormSelect value={programId} disabled={true} onChange={(e) => setProgramId(e.target.value)}>
                   <option value={programId} hidden>
                     {programName}
                   </option>
@@ -241,7 +241,7 @@ const EditAjuan = (props) => {
               </CCol>
               <CCol md={12} className="mb-3">
                 <h6>Select Province</h6>
-                <CFormSelect value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
+                <CFormSelect value={provinceId} disabled={true} onChange={(e) => setProvinceId(e.target.value)}>
                   {provincesList.map((prov) => (
                     <option key={prov.id} value={prov.id}>
                       {prov.name_province}
@@ -254,7 +254,7 @@ const EditAjuan = (props) => {
                 <h6>Select Region</h6>
                 <CFormSelect
                   value={regionId}
-                  disabled={!provinceId}
+                  disabled={true}
                   onChange={(e) => setRegionId(e.target.value)}
                 >
                   {regionList.map((reg) => (
@@ -267,7 +267,7 @@ const EditAjuan = (props) => {
 
               <CCol md={12} className="mb-3">
                 <h6>Select User</h6>
-                <CFormSelect value={userId} onChange={(e) => setUserId(e.target.value)}>
+                <CFormSelect value={userId} disabled={true} onChange={(e) => setUserId(e.target.value)}>
                   <option value="">--Pilih--</option>
                   {usersList.map((user) => (
                     <option key={user.id} value={user.id}>
