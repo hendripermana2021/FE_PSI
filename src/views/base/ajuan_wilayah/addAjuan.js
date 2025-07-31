@@ -22,9 +22,9 @@ import { serverSourceDev } from '../../../constant/constantaEnv'
 import { swalNotif } from '../../../constant/functionGlobal'
 
 const AddAjuanForm = (props) => {
-  const { refreshTable, program, visibility } = props // Only refreshTable since we're creating a new role
+  const { refreshTable, programId, visibility } = props // Only refreshTable since we're creating a new role
   const [loading, setLoading] = useState(false)
-  const [programId, setProgramId] = useState('')
+  // const [programId, setProgramId] = useState('')
   const [commented, setCommented] = useState('')
   const [userId, setUserId] = useState('')
   const [programList, setProgramList] = useState([])
@@ -43,7 +43,7 @@ const AddAjuanForm = (props) => {
   const [regions, setRegions] = useState([]) // For storing regions based on selected province
   const [usersList, setUserList] = useState([]) // For storing Users based on selected province and Region
 
-  console.log('kriteria', kriteriaSelections)
+  console.log('THIs PROGRAM from ID', programId)
   console.log('sub_kriteria')
   // Fetch kriteria and program data on component mount
   useEffect(() => {
@@ -52,7 +52,7 @@ const AddAjuanForm = (props) => {
 
   // Fetch all provinces on component mount
   useEffect(() => {
-    const getProvinces = async () => {
+      const getProvinces = async () => {
       try {
         const response = await axios.get(`${serverSourceDev}province-sub`, {
           headers: {
@@ -132,7 +132,7 @@ const AddAjuanForm = (props) => {
   }, [regionId])
 
   useEffect(() => {
-    if (programId) {
+    if (programId != '99') {
       const getKriteriaList = async () => {
         setLoading(true)
         try {
@@ -195,7 +195,7 @@ const AddAjuanForm = (props) => {
     e.preventDefault()
     setLoading(true)
 
-    if (!programId || !commented || !provinceId || !regionId || !userId) {
+    if (!programId || !provinceId || !regionId || !userId) {
       setLoading(false)
       return Swal.fire({
         icon: 'error',
@@ -236,7 +236,7 @@ const AddAjuanForm = (props) => {
           title: 'Ajuan successfully added!',
           confirmButtonText: 'OK',
         }).then(() => {
-          setProgramId('')
+          // setprogram.id('')
           setCommented('')
           setUserId('')
           setVisible(false)
@@ -250,7 +250,7 @@ const AddAjuanForm = (props) => {
           title: response.msg,
           confirmButtonText: 'OK',
         }).then(() => {
-          setProgramId('')
+          // setprogram.id('')
           setCommented('')
           setUserId('')
           // setVisible(false)
@@ -290,9 +290,9 @@ const AddAjuanForm = (props) => {
         <CModalBody>
           <CForm onSubmit={handleSubmit}>
             <CRow>
-              <CCol md={12} className="mb-3">
+              {/* <CCol md={12} className="mb-3">
                 <h6>Select Program</h6>
-                <CFormSelect value={programId} onChange={(e) => setProgramId(e.target.value)}>
+                <CFormSelect value={program} onChange={(e) => setProgramId(e.target.value)}>
                   <option value="">Select Program</option>
                   {programList.map((program) => (
                     <option key={program.id} value={program.id}>
@@ -300,7 +300,7 @@ const AddAjuanForm = (props) => {
                     </option>
                   ))}
                 </CFormSelect>
-              </CCol>
+              </CCol> */}
               <CCol md={12} className="mb-3">
                 <h6>Select Province</h6>
                 <CFormSelect value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
@@ -406,7 +406,7 @@ const AddAjuanForm = (props) => {
 
 AddAjuanForm.propTypes = {
   refreshTable: propTypes.func.isRequired,
-  program: propTypes.number.isRequired,
+  programId: propTypes.number.isRequired,
   visibility: propTypes.bool.isRequired,
 }
 

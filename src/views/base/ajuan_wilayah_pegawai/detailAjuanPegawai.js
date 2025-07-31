@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import propTypes from 'prop-types'
 
-const DetailAjuan = (props) => {
+const DetailAjuanPegawai = (props) => {
   const { ajuan: data, refreshTable } = props
   const [loading, setLoading] = useState(false)
   const [programId, setProgramId] = useState(data.id_program)
@@ -30,6 +30,8 @@ const DetailAjuan = (props) => {
   const [visible, setVisible] = useState(false)
   const [kriteriaList, setKriteriaList] = useState(data.psi_data || [])
   const [subKriteriaId, setSubKriteriaId] = useState(data.psi_data.id_subkriteria)
+
+  console.log("THISTSTSTSTST ==> ", data)
 
   return (
     <>
@@ -132,9 +134,9 @@ const DetailAjuan = (props) => {
   )
 }
 
-DetailAjuan.propTypes = {
+DetailAjuanPegawai.propTypes = {
   ajuan: propTypes.object,
   refreshTable: propTypes.func,
 }
 
-export default DetailAjuan
+export default DetailAjuanPegawai

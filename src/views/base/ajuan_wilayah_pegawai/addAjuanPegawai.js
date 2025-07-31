@@ -21,12 +21,11 @@ import propTypes from 'prop-types'
 import { serverSourceDev } from '../../../constant/constantaEnv'
 import { swalNotif } from '../../../constant/functionGlobal'
 
-const AddAjuanForm = (props) => {
+const AddAjuanPegawai = (props) => {
   const { refreshTable, program } = props // Only refreshTable since we're creating a new role
   const [loading, setLoading] = useState(false)
   const [programId, setProgramId] = useState('')
   const [commented, setCommented] = useState('')
-  const [userId, setUserId] = useState('')
   const [programList, setProgramList] = useState([])
   const [kriteriaList, setKriteriaList] = useState([])
   const [kriteriaSelections, setKriteriaSelections] = useState([
@@ -36,13 +35,6 @@ const AddAjuanForm = (props) => {
     },
   ])
   const [visible, setVisible] = useState(false)
-  const [provinceId, setProvinceId] = useState('')
-  const [regionId, setRegionId] = useState('')
-  const [provinces, setProvinces] = useState([]) // For storing all provinces
-  const [regions, setRegions] = useState([]) // For storing regions based on selected province
-  const [usersList, setUserList] = useState([]) // For storing Users based on selected province and Region
-
-  console.log('kriteria', kriteriaSelections)
   // Fetch kriteria and program data on component mount
   useEffect(() => {
     getProgram()
@@ -111,7 +103,9 @@ const AddAjuanForm = (props) => {
     e.preventDefault()
     setLoading(true)
 
-    if (!programId || !commented || !provinceId || !regionId || !userId) {
+    const getProfile = JSON.parse(localStorage.getItem('profile'))
+
+    if (!programId || !getProfile.province_id || !getProfile.region_id ) {
       setLoading(false)
       return Swal.fire({
         icon: 'error',
@@ -122,9 +116,7 @@ const AddAjuanForm = (props) => {
     const payload = {
       id_program: Number(programId),
       commented: commented,
-      id_province: Number(provinceId),
-      id_region: Number(regionId),
-      id_users: Number(userId),
+      id_users: Number(getProfile.userId),
       // kriteria: kriteriaSelections,
       kriteria: kriteriaList[0]?.programs_kriteria.map((kriteria, index) => ({
         id_kriteria: kriteria.id,
@@ -132,7 +124,7 @@ const AddAjuanForm = (props) => {
       })),
     }
 
-    console.log('payload', payload)
+    console.log('payload pegawai', payload)
 
     try {
       const response = await axios.post(
@@ -154,7 +146,6 @@ const AddAjuanForm = (props) => {
         }).then(() => {
           setProgramId('')
           setCommented('')
-          setUserId('')
           setVisible(false)
           refreshTable()
           setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
@@ -168,8 +159,6 @@ const AddAjuanForm = (props) => {
         }).then(() => {
           setProgramId('')
           setCommented('')
-          setUserId('')
-          // setVisible(false)
           setKriteriaSelections([{ id_kriteria: '', id_subKriteria: '' }])
         })
       }
@@ -200,7 +189,7 @@ const AddAjuanForm = (props) => {
         size="lg"
       >
         <CModalHeader>
-          <CModalTitle>Add Ajuan</CModalTitle>
+          <CModalTitle>Add Ajuan Pegawai</CModalTitle>
         </CModalHeader>
 
         <CModalBody>
@@ -277,9 +266,9 @@ const AddAjuanForm = (props) => {
   )
 }
 
-AddAjuanForm.propTypes = {
+AddAjuanPegawai.propTypes = {
   refreshTable: propTypes.func.isRequired,
   program: propTypes.number.isRequired,
 }
 
-export default AddAjuanForm
+export default AddAjuanPegawai

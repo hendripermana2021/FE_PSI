@@ -19,11 +19,11 @@ import $ from 'jquery'
 import 'jquery/dist/jquery.min.js'
 import axios from 'axios'
 import { constantaSource, serverSourceDev } from '../../../constant/constantaEnv'
-import AddAjuanForm from './addAjuanPegawai'
-import EditAjuan from './editAjuanPegawai'
+import EditAjuanPegawai from './editAjuanPegawai'
 import Swal from 'sweetalert2'
-import DetailAjuan from './detailAjuanPegawai'
+import DetailAjuanPegawai from './detailAjuanPegawai'
 import { formatRupiah, getDateTimeString, swalNotif } from '../../../constant/functionGlobal'
+import AddAjuanPegawai from './addAjuanPegawai'
 
 const TableAjuanPegawai = () => {
   const [program, setProgram] = useState('') // Default to empty string
@@ -31,7 +31,7 @@ const TableAjuanPegawai = () => {
   const [ajuan, setAjuan] = useState([])
   const [loading, setLoading] = useState(true)
 
-  console.log('ajuan', ajuan)
+  console.log('ajuan asdasfasdasdas', ajuan)
 
   // Fetch Program data on mount
   useEffect(() => {
@@ -119,7 +119,7 @@ const TableAjuanPegawai = () => {
                 <strong>Table Ajuan</strong> <small>{String(constantaSource.tableHeader)}</small>
               </CCol>
               <CCol md={5} className="text-end">
-                <AddAjuanForm refreshTable={getAjuan} programId={program} />
+                <AddAjuanPegawai refreshTable={getAjuan} programId={program} />
               </CCol>
             </CRow>
           </CCardHeader>
@@ -157,15 +157,15 @@ const TableAjuanPegawai = () => {
                                 )}{' '}
                               </td>
                               <td className="text-center">
-                                {/* <CDropdown variant="btn-group" key={index}>
+                                <CDropdown variant="btn-group" key={index}>
                                   <CButton color="primary">Action</CButton>
                                   <CDropdownToggle color="primary" split />
                                   <CDropdownMenu>
                                     <CDropdownItem>
-                                      <EditAjuan ajuan={data} refreshTable={getAjuan} />
+                                      <EditAjuanPegawai ajuan={data} refreshTable={getAjuan} />
                                     </CDropdownItem>
                                     <CDropdownItem>
-                                      <DetailAjuan ajuan={data} />
+                                      <DetailAjuanPegawai ajuan={data} />
                                     </CDropdownItem>
                                     <CDropdownItem>
                                       <CButton onClick={() => deleteAjuan(data)}>
@@ -173,7 +173,7 @@ const TableAjuanPegawai = () => {
                                       </CButton>
                                     </CDropdownItem>
                                   </CDropdownMenu>
-                                </CDropdown> */}
+                                </CDropdown>
                               </td>
                             </tr>
                           ) || '',

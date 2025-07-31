@@ -180,7 +180,7 @@ const AppSidebar = () => {
             items: [
               {
                 component: CNavItem,
-                name: 'Ajuan Wilayah',
+                name: 'Ajuan',
                 to: '/base/ajuan',
                 icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
               },

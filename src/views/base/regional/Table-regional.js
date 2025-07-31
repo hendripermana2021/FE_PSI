@@ -172,7 +172,7 @@ const TableRegional = () => {
                                             <tr key={index}>
                                               <td className="text-center">{index + 1}</td>
                                               <td className="text-center">
-                                                {region.name_region || 'N/A'} {region.id}
+                                                {region.name_region || 'N/A'}
                                               </td>
                                               <td className="text-center" key={index}>
                                                 {' '}

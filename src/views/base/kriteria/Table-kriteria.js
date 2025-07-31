@@ -174,7 +174,7 @@ const TableKriteria = () => {
                                       <tr key={index}>
                                         <td className="mb-3">{index + 1}</td>
                                         <td>
-                                          {subKriteria.name_sub || 'N/A'} {subKriteria.id}
+                                          {subKriteria.name_sub || 'N/A'}
                                         </td>
                                         <td>{subKriteria.value || 'N/A'}</td>
                                         <td className="text-center">

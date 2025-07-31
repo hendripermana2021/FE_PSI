@@ -13,7 +13,7 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import avatar8 from '../../assets/images/avatars/8.jpg'
-import { useNavigate } from 'react-router-dom'
+import { json, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import { serverSourceDev } from '../../constant/constantaEnv'
@@ -35,6 +35,7 @@ const AppHeaderDropdown = () => {
         },
       })
       setProfile(response.data.data)
+      localStorage.setItem('profile', JSON.stringify(response.data.data))
     } catch (error) {
       console.error(error)
     }
@@ -59,6 +60,7 @@ const AppHeaderDropdown = () => {
           })
 
           localStorage.removeItem('accessToken')
+          localStorage.removeItem('profile')
 
           Swal.fire('Logout!', 'Your has been logout', 'success').then(() => {
             navigate('/login')

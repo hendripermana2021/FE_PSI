@@ -20,7 +20,7 @@ import { serverSourceDev } from '../../../constant/constantaEnv'
 import propTypes from 'prop-types'
 import { swalNotif } from '../../../constant/functionGlobal'
 
-const EditAjuan = (props) => {
+const EditAjuanPegawai = (props) => {
   const { ajuan: data, refreshTable } = props
   const [loading, setLoading] = useState(false)
   const [programId, setProgramId] = useState(data.id_program)
@@ -228,50 +228,13 @@ const EditAjuan = (props) => {
             <CRow>
               <CCol md={12} className="mb-3">
                 <h6>Select Program</h6>
-                <CFormSelect value={programId} onChange={(e) => setProgramId(e.target.value)}>
+                <CFormSelect value={programId} disabled onChange={(e) => setProgramId(e.target.value)}>
                   <option value={programId} hidden>
                     {programName}
                   </option>
                   {programList.map((program) => (
                     <option key={program.id} value={program.id}>
                       {program.name_program}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-              <CCol md={12} className="mb-3">
-                <h6>Select Province</h6>
-                <CFormSelect value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
-                  {provincesList.map((prov) => (
-                    <option key={prov.id} value={prov.id}>
-                      {prov.name_province}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-
-              <CCol md={12} className="mb-3">
-                <h6>Select Region</h6>
-                <CFormSelect
-                  value={regionId}
-                  disabled={!provinceId}
-                  onChange={(e) => setRegionId(e.target.value)}
-                >
-                  {regionList.map((reg) => (
-                    <option key={reg.id} value={reg.id}>
-                      {reg.name_region}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-
-              <CCol md={12} className="mb-3">
-                <h6>Select User</h6>
-                <CFormSelect value={userId} onChange={(e) => setUserId(e.target.value)}>
-                  <option value="">--Pilih--</option>
-                  {usersList.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name}
                     </option>
                   ))}
                 </CFormSelect>
@@ -324,9 +287,9 @@ const EditAjuan = (props) => {
   )
 }
 
-EditAjuan.propTypes = {
+EditAjuanPegawai.propTypes = {
   ajuan: propTypes.object,
   refreshTable: propTypes.func,
 }
 
-export default EditAjuan
+export default EditAjuanPegawai

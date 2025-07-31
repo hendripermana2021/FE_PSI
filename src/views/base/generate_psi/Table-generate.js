@@ -26,7 +26,7 @@ import { swalNotif, toDecimal } from '../../../constant/functionGlobal'
 import { fragmentPoint } from '../../../utils/FragmentFunction'
 
 const TableGenerate = () => {
-  const [program, setProgram] = useState('') // Default to empty string
+  const [program, setProgram] = useState('99') // Default to empty string
   const [programList, setProgramList] = useState([])
   const [ajuan, setAjuan] = useState([])
   const [rumus, setRumus] = useState([])
@@ -195,6 +195,7 @@ const TableGenerate = () => {
                           color="primary"
                           className="item-end"
                           type="button"
+                          disabled = {program == '99' ? true : false}
                           onClick={() => {
                             processPSI(program)
                           }}
@@ -231,7 +232,7 @@ const TableGenerate = () => {
                   </CCol>
                   <CCol md={7} className="text-end">
                     <CFormSelect value={program} onChange={(e) => setProgram(e.target.value)}>
-                      <option value="99">Select Program</option>
+                      <option value="99" selected>Select Program</option>
                       {programList.map((prog) => (
                         <option key={prog.id} value={prog.id}>
                           {prog.name_program}
